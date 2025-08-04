@@ -1,16 +1,18 @@
 "use server";
-import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 
-interface AddNewCategoryInterface {
+import { prisma } from "@/lib/prisma";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+
+
+interface SubCategoryInterface {
     title: string;
     slogan: string;
     description: string;
-    img: string;
+    img: string
 }
 
-export const addNewCategory = async (data: AddNewCategoryInterface) => {
+export const addNewSubCategory = async (data: SubCategoryInterface, categoryId: number) => {
     const token = (await cookies()).get("sharktoken")?.value;
     if (!token) {
         return {
@@ -25,54 +27,57 @@ export const addNewCategory = async (data: AddNewCategoryInterface) => {
             message: "Session expired, please login again",
         }
     }
-    try {
-        const { title, slogan, description, img } = data;
-        if (!title || !slogan || !description || !img) {
-            return {
-                ok: false,
-                message: "All fields are required",
-            };
+    const category = await prisma.category.findFirst({
+        where: {
+            id: categoryId
         }
-        const newCategory = await prisma.category.create({
-            data: {
-                title,
-                slogan,
-                description,
-                img
-            }
-        });
-        if (!newCategory) {
-            return {
-                ok: false,
-                message: "Failed to add new category",
-            };
-        }
-        return {
-            ok: true,
-            message: "New category added successfully",
-            category: newCategory,
-        };
-    }
-    catch (error) {
+    });
+    if (!category) {
         return {
             ok: false,
-            message: "Failed to add new category",
-        };
+            message: "Failed to add new sub category, category not found."
+        }
+    }
+    const { title, slogan, description, img } = data;
+    const addedSubCategory = await prisma.subCategory.create({
+        data: {
+            title,
+            description,
+            img,
+            slogan,
+            category: {
+                connect: { id: categoryId }
+            }
+        }
+    });
+    if (!addedSubCategory) {
+        return {
+            ok: false,
+            message: "Failed to add new sub category."
+        }
+    }
+    else {
+        return {
+            ok: true,
+            message: "New sub category was created successfully"
+        }
     }
 }
-export const getAllCategories = async (
+
+
+
+export const getAllSubCategories = async (
     page: number = 1,
     limit: number = 10,
     orderBy: "asc" | "desc" = "asc",
+    categoryId?: number,
     search?: string,
     select?: string[]
 ) => {
     const skip = (page - 1) * limit;
     const searchTerm = search?.length ? search : undefined;
 
-
-    let searchObj = {};
-    let selectObj: { [key: string]: boolean } = {};
+    let searchObj: any = {};
     if (searchTerm) {
         searchObj = {
             OR: [
@@ -81,6 +86,11 @@ export const getAllCategories = async (
             ]
         }
     }
+    if (categoryId) {
+        searchObj.categoryId = categoryId;
+    }
+
+    let selectObj: { [key: string]: boolean } = {};
     if (select) {
         for (const field of select) {
             selectObj[field] = true;
@@ -105,8 +115,8 @@ export const getAllCategories = async (
     }
 
     const [categories, total] = await Promise.all([
-        prisma.category.findMany(queryOptions),
-        prisma.category.count({ where: searchObj }),
+        prisma.subCategory.findMany(queryOptions),
+        prisma.subCategory.count({ where: searchObj }),
     ]);
 
 
@@ -127,7 +137,8 @@ export const getAllCategories = async (
     };
 };
 
-export const deleteOneCategory = async (id: number) => {
+
+export const deleteOneSubCategory = async (id: number) => {
     const token = (await cookies()).get("sharktoken")?.value;
     if (!token) {
         return {
@@ -143,7 +154,7 @@ export const deleteOneCategory = async (id: number) => {
         }
     }
     try {
-        const deletedCategory = await prisma.category.delete({
+        const deletedCategory = await prisma.subCategory.delete({
             where: {
                 id
             }
@@ -156,7 +167,7 @@ export const deleteOneCategory = async (id: number) => {
         }
         return {
             ok: true,
-            message: "Category deleted successfully",
+            message: "Sub category deleted successfully",
         };
     }
     catch (error) {
@@ -167,7 +178,7 @@ export const deleteOneCategory = async (id: number) => {
     }
 }
 
-export const updateOneCategory = async (id: number, data: AddNewCategoryInterface) => {
+export const updateOneSubCategory = async (id: number, data: SubCategoryInterface) => {
     const token = (await cookies()).get("sharktoken")?.value;
     if (!token) {
         return {
@@ -190,7 +201,7 @@ export const updateOneCategory = async (id: number, data: AddNewCategoryInterfac
                 message: "All fields are required",
             };
         }
-        const updatedCategory = await prisma.category.update({
+        const updatedCategory = await prisma.subCategory.update({
             where: {
                 id
             },
@@ -204,19 +215,19 @@ export const updateOneCategory = async (id: number, data: AddNewCategoryInterfac
         if (!updatedCategory) {
             return {
                 ok: false,
-                message: "Failed to update category",
+                message: "Failed to update sub category",
             };
         }
         return {
             ok: true,
-            message: "Category updated successfully",
+            message: "Sub category updated successfully",
             category: updatedCategory,
         };
     }
     catch (error) {
         return {
             ok: false,
-            message: "Failed to update category",
+            message: "Failed to update sub category",
         };
     }
 }

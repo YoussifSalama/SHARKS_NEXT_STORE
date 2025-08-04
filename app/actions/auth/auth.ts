@@ -5,7 +5,6 @@ export const login = async (data: { key: string; password: string }) => {
     const { key, password } = data;
     const admin = process.env.DASHBOARD_ADMIN;
     const jwtSecret = process.env.JWT_SECRET;
-    console.log({ admin, jwtSecret })
 
     if (!admin || !jwtSecret) {
         return {

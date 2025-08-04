@@ -8,27 +8,23 @@ interface CategoryCardData {
 
 import { Button } from "@/components/ui/button";
 import { Eye, Pencil, Trash2 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DeleteDialog } from "./DeleteDialog";
 import { useFileDestroyer } from "@/app/actions/files/clientFiles";
 import { toast } from "react-toastify";
-import { deleteOneCategory } from "@/app/actions/category/category";
 import Progressbar from "./Progressbar";
 import Loader from "./Loader";
-import { UpdateCategoryDialog } from "./UpdateDialogs";
-import { useRouter } from "next/navigation";
-import { CategoryContext } from "@/context/admin/StoreCategoryContext";
+import { UpdateSubCategoryDialog } from "./UpdateDialogs";
+import { deleteOneSubCategory } from "@/app/actions/category/subcategory";
 
 
-const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, setRefresh?: (refresh: number) => void, settings?: boolean }) => {
+const SubCategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, setRefresh?: (refresh: number) => void, settings?: boolean }) => {
     const [progress, setProgress] = useState<number>(0);
     const { destroyFile } = useFileDestroyer(setProgress);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [description, setDescription] = useState<string | null>(null);
     const [showAllDescription, setShowAllDescription] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const router = useRouter();
-    const categoryStore = useContext(CategoryContext);
     useEffect(() => {
         if (data.img instanceof File) {
             const url = URL.createObjectURL(data.img);
@@ -39,7 +35,7 @@ const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, 
         } else if (typeof data.img === "string" && data.img.trim() !== "") {
             setImageUrl(data.img);
         } else {
-            setImageUrl("/category.jpeg");
+            setImageUrl("/subcategory.jpg");
         }
     }, [data.img]);
 
@@ -52,11 +48,11 @@ const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, 
     }, [data.description]);
 
     // setting logic
-    const deleteCategory = async (id: number, url: string) => {
+    const deleteSubCategory = async (id: number, url: string) => {
         setLoading(true);
         destroyFile(url, "category").then(async (deletedFile) => {
             if (deletedFile.ok) {
-                const result = await deleteOneCategory(id);
+                const result = await deleteOneSubCategory(id);
                 if (result.ok) {
                     toast.dark(result.message);
                     setRefresh && setRefresh(Math.random())
@@ -64,11 +60,11 @@ const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, 
                     toast.error(result.message || "Something went wrong.");
                 }
             } else {
-                toast.error("Failed to delete img, category will be deleted without img...");
+                toast.error("Failed to delete img,sub category will be deleted without img...");
             }
             setLoading(false);
         }).catch((err) => {
-            toast.error(err.message || "Failed to delete img, category will be deleted without img...");
+            toast.error(err.message || "Failed to delete img,sub category will be deleted without img...");
         })
     }
 
@@ -79,39 +75,26 @@ const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, 
             <div className="relative rounded-md shadow-md overflow-hidden">
                 {settings && (
                     <div className="absolute top-2 right-2 flex gap-2 z-20">
-                        <DeleteDialog title="Delete Category" description={`Are you sure you want to delete ${data.title}?
+                        <DeleteDialog title="Delete Sub Category" description={`Are you sure you want to delete ${data.title}?
                          This action cannot be undone.`}>
                             <Button variant="outline" className="rounded-sm shadow-md bg-white opacity-85 hover:opacity-100 hover:scale-105">
                                 <Trash2 className="w-4 h-4" />
                             </Button>
-                            <CategoryCard data={data} settings={false} />
+                            <SubCategoryCard data={data} settings={false} />
                             <Button value="defautl"
                                 disabled={loading || progress > 0}
-                                onClick={() => deleteCategory(data.id, data.img as string)}
+                                onClick={() => deleteSubCategory(data.id, data.img as string)}
                             >{
                                     loading ? <Loader classname="w-4 h-4" /> : "Delete"
                                 }</Button>
                             <div>  {progress > 0 && progress <= 100 && <Progressbar progress={progress} upload={false} />}
                             </div>
                         </DeleteDialog>
-                        <UpdateCategoryDialog setRefresh={setRefresh} title="Update Category" description={`Are you sure you want to update ${data.title}`} data={data}>
+                        <UpdateSubCategoryDialog setRefresh={setRefresh} title="Update Category" description={`Are you sure you want to update ${data.title}`} data={data}>
                             <Button variant="outline" className="rounded-sm shadow-md bg-white opacity-85 hover:opacity-100 hover:scale-105">
                                 <Pencil className="w-4 h-4" />
                             </Button>
-                        </UpdateCategoryDialog>
-                        <Button
-                            onClick={() => {
-                                categoryStore?.setData({
-                                    id: data.id,
-                                    title: data.title,
-                                    description: data.description,
-                                    img: data.img as string
-                                });
-                                router.push("categories/" + data.id + "/sub-categories")
-                            }}
-                            variant="outline" className="rounded-sm shadow-md bg-white opacity-85 hover:opacity-100 hover:scale-105">
-                            <Eye />
-                        </Button>
+                        </UpdateSubCategoryDialog>
                     </div>
                 )}
                 {imageUrl && (
@@ -168,4 +151,4 @@ const CategoryCard = ({ data, setRefresh, settings }: { data: CategoryCardData, 
 
 
 
-export default CategoryCard;
+export default SubCategoryCard;

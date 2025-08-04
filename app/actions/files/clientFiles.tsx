@@ -2,12 +2,12 @@
 
 import { useEdgeStore } from "@/lib/edgestore";
 
-type BucketName = "publicFiles" | "category";
+type BucketName = "publicFiles" | "category" | "subcategory" | "product";
 
 export const useFileUploader = (setPogress: (progress: number) => void) => {
     const { edgestore } = useEdgeStore();
 
-    const uploadFile = async (file: File, bucket: BucketName, replace?: boolean, oldFileUrl?: string) => {
+    const uploadFile = async (file: File, bucket: BucketName, replace?: boolean, oldFileUrl?: string, setMinProgress?: (progress: number) => void) => {
         if (!file) return;
         const uploadObj: any = {}
         if (replace && oldFileUrl) {
@@ -16,14 +16,35 @@ export const useFileUploader = (setPogress: (progress: number) => void) => {
         uploadObj.file = file;
         uploadObj.onProgressChange = (progress: number) => {
             setPogress(progress);
+            if (setMinProgress) { setMinProgress(progress) };
         };
         const res = await edgestore[bucket].upload(uploadObj);
         return res;
     };
 
+    const uploadFiles = async (
+        files: File[],
+        bucket: BucketName,
+        onProgress?: (fileIndex: number, progress: number) => void
+    ) => {
+        if (!files || files.length === 0) return;
 
-    return { uploadFile };
+        const results = await Promise.all(
+            files.map((file, index) =>
+                uploadFile(file, bucket, false, undefined, (progress: number) => {
+                    if (onProgress) onProgress(index, progress);
+                })
+            )
+        );
+
+        return results;
+    };
+
+
+
+    return { uploadFile, uploadFiles };
 };
+
 
 export const useFileDestroyer = (setProgress: (progress: number) => void) => {
     const { edgestore } = useEdgeStore();

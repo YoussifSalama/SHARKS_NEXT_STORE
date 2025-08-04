@@ -2,16 +2,13 @@
 
 import { useParams } from "next/navigation";
 import Navbar from "./components/navbar/Navbar";
-import SubNavbar from "./components/navbar/SubNavbar";
 import CategoryProvider from "@/context/admin/StoreCategoryContext";
 
 const Categorylayout = ({ children }: { children: React.ReactNode }) => {
-    const { categoryId } = useParams();
     return (<main>
         {/* navbar */}
         {
-            categoryId ? <SubNavbar />
-                : <Navbar />
+            <Navbar />
         }
         {/* content */}
         <div className="p-4 border rounded-b-md rounded-tr-md shadow-md h-full shadow-md">

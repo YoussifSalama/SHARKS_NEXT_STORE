@@ -15,6 +15,14 @@ const edgeStoreRouter = es.router({
             // }
             return true;
         }),
+    subcategory: es.fileBucket()
+        .beforeDelete(async ({ ctx, fileInfo }) => {
+            return true;
+        }),
+    product: es.fileBucket()
+        .beforeDelete(async ({ ctx, fileInfo }) => {
+            return true;
+        })
 });
 
 const handler = createEdgeStoreNextHandler({

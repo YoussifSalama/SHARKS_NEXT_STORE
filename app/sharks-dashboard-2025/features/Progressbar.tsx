@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 
 export const Progressbar2 = ({ progress, upload }: { progress: number; upload: boolean }) => {
     const styles = upload
-        ? "bg-gradient-to-t from-black/40 to-black/60"
-        : "bg-gradient-to-t from-red-400/70 to-red-600/80";
+        ? "bg-gradient-to-t from-black/30 to-black/50"
+        : "bg-gradient-to-t from-red-400/60 to-red-600/70";
 
     return (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30">

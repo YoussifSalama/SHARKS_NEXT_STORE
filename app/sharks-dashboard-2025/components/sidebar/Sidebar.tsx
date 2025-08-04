@@ -41,7 +41,9 @@ const Sidebar = ({ isSidebarHovered }: { isSidebarHovered: boolean }) => {
         <nav>
             <ul className="flex flex-col gap-2 *:rounded-md">
                 {routes?.map((route) => {
-                    const isActive = route.href == pathname;
+                    const basePath = pathname.replace("/sharks-dashboard-2025/", "");
+                    const hrefPath = route.href.replace("/sharks-dashboard-2025/", "");
+                    const isActive = basePath.startsWith(hrefPath)
 
                     return <Link key={route.id} href={route.href} className={`flex gap-2  border p-2 text-md transition-all duration-300   ${isActive && "shadow-md"}
                     ${isSidebarHovered ? "items-center justify-start" : "items-center justify-center"}

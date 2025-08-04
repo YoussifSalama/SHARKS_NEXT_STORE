@@ -8,15 +8,17 @@ import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import FileInput from "../../features/FileInput";
-import CategoryCard from "../../features/CategoryCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { useFileDestroyer, useFileUploader } from "@/app/actions/files/clientFiles";
-import Progressbar from "../../features/Progressbar";
-import { addNewCategory } from "@/app/actions/category/category";
 import { toast } from "react-toastify";
-import Loader from "../../features/Loader";
+import Progressbar from "@/app/sharks-dashboard-2025/features/Progressbar";
+import SubCategoryCard from "@/app/sharks-dashboard-2025/features/SubCategoryCard";
+import FileInput from "@/app/sharks-dashboard-2025/features/FileInput";
+import { CategoryContext } from "@/context/admin/StoreCategoryContext";
+import { addNewSubCategory } from "@/app/actions/category/subcategory";
+import { useParams, useRouter } from "next/navigation";
+import Loader from "@/app/sharks-dashboard-2025/features/Loader";
 
 const addNewCategoryValidationSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long").max(50, "Title max length 50 characters"),
@@ -27,13 +29,16 @@ const addNewCategoryValidationSchema = z.object({
     }),
 });
 
-const AddCategory = () => {
+const AddSubCategory = () => {
     const [display, setDisplay] = useState<boolean>(false);
     const [progress, setProgress] = useState<number>(0);
     const [progressType, setProgressType] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
     const { uploadFile } = useFileUploader(setProgress);
     const { destroyFile } = useFileDestroyer(setProgress);
+    const categoryStore = useContext(CategoryContext);
+    const { categoryId } = useParams();
+    const router = useRouter();
     const form = useForm<z.infer<typeof addNewCategoryValidationSchema>>({
         resolver: zodResolver(addNewCategoryValidationSchema),
         mode: "onChange",
@@ -47,13 +52,12 @@ const AddCategory = () => {
 
 
 
-
-    const handleAddNewCategory = async (
+    const handleAddNewSubCategory = async (
         data: z.infer<typeof addNewCategoryValidationSchema>
     ) => {
         setLoading(true);
         setProgressType(true);
-        uploadFile(data.img, "category")
+        uploadFile(data.img, "subcategory")
             .then(async (uploadedFile) => {
                 const url = uploadedFile?.url;
 
@@ -62,14 +66,22 @@ const AddCategory = () => {
                     setLoading(false);
                     return;
                 }
-
-                const result = await addNewCategory({ ...data, img: url });
+                let catNo;
+                if (!categoryId) {
+                    toast.error("Category id is issing.")
+                    router.push("/sharks-dashboard-2025/categories")
+                    return;
+                }
+                else {
+                    catNo = Number(categoryId)
+                }
+                const result = await addNewSubCategory({ ...data, img: url }, catNo);
 
                 if (result?.ok) {
                     toast.dark(result.message);
                 } else {
                     setProgressType(false);
-                    destroyFile(url, "category")
+                    destroyFile(url, "subcategory")
                     toast.error(result?.message || "Something went wrong.");
                 }
 
@@ -92,7 +104,7 @@ const AddCategory = () => {
                     } max-md:order-last`}
             >
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleAddNewCategory)} className="space-y-4 w-full flex flex-col">
+                    <form onSubmit={form.handleSubmit(handleAddNewSubCategory)} className="space-y-4 w-full flex flex-col">
                         {/* Image Field */}
                         <FormField
                             name="img"
@@ -121,7 +133,7 @@ const AddCategory = () => {
                                 <FormItem>
                                     <FormLabel>Title</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Category title..." />
+                                        <Input {...field} placeholder="Sub Category title..." />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -136,7 +148,7 @@ const AddCategory = () => {
                                 <FormItem>
                                     <FormLabel>Slogan</FormLabel>
                                     <FormControl>
-                                        <Input type="text" placeholder="Category slogan..." {...field} />
+                                        <Input type="text" placeholder="Sub Category slogan..." {...field} />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -151,7 +163,7 @@ const AddCategory = () => {
                                 <FormItem>
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Category description..." {...field} className="min-h-[300px]" />
+                                        <Textarea placeholder="Sub Category description..." {...field} className="min-h-[300px]" />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -176,14 +188,36 @@ const AddCategory = () => {
             {/* Preview */}
             {display && (
                 <div className="col-span-1 md:col-span-1 lg:col-span-2 xl:col-span-2 2xl:col-span-2 space-y-2 transition-all duration-300 max-sm:order-first">
-                    <Label>Category Preview</Label>
-                    <CategoryCard
+                    <Label>Sub Category Preview</Label>
+                    <SubCategoryCard
                         data={{
                             id: 0,
                             ...form.watch(),
                             img: form.watch("img") ?? null,
                         }}
                     />
+                    {
+                        categoryStore?.data &&
+                        <div className="border shadow-md p-4 rounded-md flex ">
+                            <div className="space-y-2 w-50 flex items-center justify-center flex-col">
+                                <img src={categoryStore?.data?.img} alt={`category-` + categoryStore?.data?.title + `-img`}
+                                    className="w-24 rounded-md shadow-md object-contain h-fit"
+                                />
+                                <p className="capitalize font-bold text-center w-fit">{categoryStore?.data?.title}</p>
+                            </div>
+                            <div className="p-2">
+                                <p className="capitalize font-medium text-sm text-center w-fit">{categoryStore?.data?.title}</p>
+
+                                <p className="text-sm text-gray-600 break-words whitespace-pre-wrap max-w-full"
+                                    style={{
+                                        wordBreak: "break-word"
+                                    }}
+                                >
+                                    {categoryStore?.data?.description.slice(0, 200)}...
+                                </p>
+                            </div>
+                        </div>
+                    }
                 </div>
             )}
 
@@ -191,4 +225,4 @@ const AddCategory = () => {
     );
 };
 
-export default AddCategory;
+export default AddSubCategory;

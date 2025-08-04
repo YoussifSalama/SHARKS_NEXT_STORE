@@ -1,15 +1,19 @@
 "use client";
 
-import { getAllCategories } from "@/app/actions/category/category";
 import { useEffect, useState } from "react";
-import CategoryCard from "../features/CategoryCard";
-import { CategoriesLoader } from "../features/Loader";
-import Pagination from "../features/Paginations";
+import SubCategoryCard from "@/app/sharks-dashboard-2025/features/SubCategoryCard";
+import { CategoriesLoader } from "@/app/sharks-dashboard-2025/features/Loader";
+import Paginations from "@/app/sharks-dashboard-2025/features/Paginations";
+import { getAllSubCategories } from "@/app/actions/category/subcategory";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
-const Categories = () => {
+const SubCategories = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [refresh, setRefresh] = useState<number>(0);
-    const [categories, setCategories] = useState<{
+    const { categoryId } = useParams();
+    const router = useRouter();
+    const [subCategories, setSubCategories] = useState<{
         data: any[];
         meta: {
             page: number;
@@ -33,28 +37,38 @@ const Categories = () => {
         order: "asc",
     });
 
-    const fetchCategories = async () => {
+    const fetchSubCategories = async () => {
         setLoading(true);
         try {
-            const result = await getAllCategories(settings.page, settings.limit, settings.order, search);
-            if (result) setCategories(result);
+            let catNo;
+            if (!categoryId) {
+                toast.error("Category id is missing.")
+                router.push("/sharks-dashboard-2025/categories")
+                return;
+            }
+            else {
+                catNo = Number(categoryId);
+            }
+            const result = await getAllSubCategories(settings.page, settings.limit, settings.order, catNo, search);
+
+            if (result) setSubCategories(result);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchCategories();
+        fetchSubCategories();
     }, [settings, refresh, applySearch]);
 
-    const hasData = Array.isArray(categories?.data) && categories.data.length > 0;
-    const isEmpty = categories && (!categories.data || categories.data.length === 0);
+    const hasData = Array.isArray(subCategories?.data) && subCategories.data.length > 0;
+    const isEmpty = subCategories && (!subCategories.data || subCategories.data.length === 0);
 
     return (
         <div className="p-4 min-h-dvh flex flex-col">
-            {categories?.meta && (
-                <Pagination
-                    meta={categories.meta}
+            {subCategories?.meta && (
+                <Paginations
+                    meta={subCategories.meta}
                     settings={settings}
                     setSettings={setSettings as any}
                     setSearch={setSearch}
@@ -71,10 +85,10 @@ const Categories = () => {
 
                 {!loading && hasData && (
                     <div className="grid grid-cols-4 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-4">
-                        {categories!.data.map((cat) => (
-                            <CategoryCard
-                                key={cat.id || cat.title}
-                                data={cat}
+                        {subCategories!.data.map((subCat) => (
+                            <SubCategoryCard
+                                key={subCat.id || subCat.title}
+                                data={subCat}
                                 settings={true}
                                 setRefresh={setRefresh}
                             />
@@ -84,14 +98,12 @@ const Categories = () => {
 
                 {!loading && isEmpty && (
                     <div className="h-dvh flex items-center justify-center w-full">
-                        <p className="text-gray-500">No categories found.</p>
+                        <p className="text-gray-500">No sub categories found.</p>
                     </div>
                 )}
             </div>
         </div>
     );
-
 };
 
-
-export default Categories;
+export default SubCategories;

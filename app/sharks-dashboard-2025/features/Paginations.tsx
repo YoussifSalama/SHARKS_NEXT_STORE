@@ -34,6 +34,7 @@ type Props = {
         page: number;
         limit: number;
         order: "asc" | "desc";
+        status?: "active" | "inActive" | "draft" | "all"
     };
     setSearch: (search: string) => void;
     setApplySearch: (applySearch: number) => void;
@@ -41,7 +42,9 @@ type Props = {
         page: number;
         limit: number;
         order: "asc" | "desc";
+        status: "active" | "inActive" | "draft" | "all";
     }>>;
+
 };
 
 const Paginations = ({ meta, settings, setSettings, setSearch, setApplySearch }: Props) => {
@@ -115,7 +118,7 @@ const Paginations = ({ meta, settings, setSettings, setSearch, setApplySearch }:
 
             {/* Sort Order */}
             <div className="flex gap-4">
-                <Select
+                {settings?.order && <Select
                     value={settings.order}
                     onValueChange={(val: "asc" | "desc") =>
                         setSettings((prev) => ({ ...prev, order: val }))
@@ -131,12 +134,31 @@ const Paginations = ({ meta, settings, setSettings, setSearch, setApplySearch }:
                             <SelectItem value="desc">Desc</SelectItem>
                         </SelectGroup>
                     </SelectContent>
-                </Select>
+                </Select>}
+                {settings?.status && <Select
+                    value={settings.status}
+                    onValueChange={(val: "active" | "inActive" | "draft" | "all") =>
+                        setSettings((prev) => ({ ...prev, status: val }))
+                    }
+                >
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select an order" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Status</SelectLabel>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inActive">In active</SelectItem>
+                            <SelectItem value="draft">Draft</SelectItem>
+                            <SelectItem value="all">All</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>}
                 <div className="flex ">
                     <Input
                         ref={inputRef}
                         type="search"
-                        placeholder="Search with category title or slogan...."
+                        placeholder="Search word..."
                         className="rounded-r-none"
                         value={searchTerm}
                         onChange={(e) => {
