@@ -58,7 +58,7 @@ const SubCategoriesTable = () => {
 
     return (
         <Table>
-            <TableCaption>Latest 10 sub categories</TableCaption>
+            <div className="p-2">Sub categories</div>
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[100px]">Cover</TableHead>

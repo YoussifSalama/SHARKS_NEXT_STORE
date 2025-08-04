@@ -57,8 +57,8 @@ const CategoriesTable = () => {
 
     return (
         <Table>
-            <TableCaption>Latest 10 categories</TableCaption>
             <TableHeader>
+            <div className="p-2">Categories</div>
                 <TableRow>
                     <TableHead>Cover</TableHead>
                     <TableHead>Title</TableHead>

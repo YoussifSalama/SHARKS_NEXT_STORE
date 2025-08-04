@@ -129,7 +129,7 @@ export default function ProductsTable() {
 
     return (
         <Table>
-            <TableCaption>Products</TableCaption>
+            <div className="p-2">Products</div>
             <TableHeader>
                 <TableRow>
                     <TableHead>Cover</TableHead>

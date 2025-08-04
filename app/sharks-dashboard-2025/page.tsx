@@ -3,6 +3,7 @@ import CountAnalytics from "./components/home/CountAnalytics";
 import CategoriesTable from "./components/home/CategoriesTable";
 import SubCategoriesTable from "./components/home/SubCategoriesTable";
 import ProductsTable from "./components/home/ProductsTable";
+import ProductPieChart from "./components/home/ProductPieChart";
 
 export const metadata: Metadata = {
     title: "Sharks Dashboard 2025/Home",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 
 const Home = () => {
-    return (<section className="flex flex-col gap-4">
+    return (<section className="flex flex-col gap-4 min-h-dvh">
         {/* analytics */}
         <CountAnalytics />
         {/* fast reach */}
@@ -19,6 +20,7 @@ const Home = () => {
             <div className="p-2 border rounded-md shadow-md"><CategoriesTable/></div>
             <div className="p-2 border rounded-md shadow-md"><SubCategoriesTable/></div>
             <div className="p-2 border rounded-md shadow-md"><ProductsTable/></div>
+            <div className="p-2 border rounded-md shadow-md min-h-[350px]"><ProductPieChart/></div>
         </div>
     </section>);
 }

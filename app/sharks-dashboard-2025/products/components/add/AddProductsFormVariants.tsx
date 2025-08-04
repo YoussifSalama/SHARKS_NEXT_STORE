@@ -88,12 +88,12 @@ const AddProductsFormVariants = ({
 
           return (
             <div key={field.id} className="border p-3 rounded-md mb-6 relative">
-              <div className="grid gap-4 grid-cols-5 items-end mb-4">
+              <div className="flex flex-col gap-3 mb-4">
                 <FormField
                   control={control}
                   name={`variants.${index}.color`}
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-[80%]">
                       <FormLabel>Color</FormLabel>
                       <FormControl>
                         <Input type="color" {...field} className="h-10 p-0" required />
