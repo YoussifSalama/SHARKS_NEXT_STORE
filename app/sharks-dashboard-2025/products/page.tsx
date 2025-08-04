@@ -98,7 +98,7 @@ const ProductsLoader = () => {
                     </TableRow>
                 </TableHeader>
                 {Array.from({ length: 10 }).map((_, idx) => (
-                    <TableRow key={idx} className="animate-pulse">
+                    <TableRow key={idx} className="animate-pulse h-full">
                         <TableCell className="w-[100px]">
                             <div className="w-24 h-24 bg-gray-200 rounded"></div>
                         </TableCell>
@@ -116,9 +116,11 @@ const ProductsLoader = () => {
                         <TableCell>
                             <div className="h-4 bg-gray-200 rounded w-36"></div>
                         </TableCell>
-                        <TableCell className="flex gap-2">
-                            <div className="h-4 bg-gray-200 rounded w-36"></div>
-                            <div className="h-4 bg-gray-200 rounded w-36"></div>
+                        <TableCell className="flex gap-2 h-[100px]">
+                            <div className="flex gap-2 h-full items-center">
+                                <div className="px-4 h-fit py-3 bg-gray-200 rounded"></div>
+                                <div className="px-4 h-fit py-3 bg-gray-200 rounded"></div>
+                            </div>
                         </TableCell>
                     </TableRow>
                 ))}

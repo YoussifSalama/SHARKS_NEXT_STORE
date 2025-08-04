@@ -12,23 +12,22 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-// Skeleton Loader for table rows
 const CategoriesTableLoader = () => {
     return (
         <>
-            {Array.from({ length: 10 }).map((_, idx) => (
+            {Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={idx} className="animate-pulse">
-                    <TableCell className="w-[100px]">
-                        <div className="h-4 bg-gray-200 rounded w-16"></div>
-                    </TableCell>
                     <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        <div className="w-16 h-16 bg-gray-200 rounded-md"></div>
                     </TableCell>
                     <TableCell>
                         <div className="h-4 bg-gray-200 rounded w-24"></div>
                     </TableCell>
                     <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-36"></div>
+                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    </TableCell>
+                    <TableCell>
+                        <div className="h-4 bg-gray-200 rounded w-48"></div>
                     </TableCell>
                 </TableRow>
             ))}
@@ -44,7 +43,7 @@ const CategoriesTable = () => {
         setLoading(true);
         try {
             const result = await getAllCategories(1, 10, "asc");
-            if (result && result.data) {
+            if (result?.data) {
                 setCategories(result.data);
             }
         } finally {
@@ -61,10 +60,10 @@ const CategoriesTable = () => {
             <TableCaption>Latest 10 categories</TableCaption>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">ID</TableHead>
+                    <TableHead>Cover</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Slogan</TableHead>
-                    <TableHead >Description</TableHead>
+                    <TableHead>Description</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -73,11 +72,18 @@ const CategoriesTable = () => {
                 ) : categories.length > 0 ? (
                     categories.map((cat) => (
                         <TableRow key={cat.id}>
-                            <TableCell className="font-medium">{cat.id}</TableCell>
+                            <TableCell>
+                                <img
+                                    src={cat.img || "/placeholder.png"}
+                                    alt={cat.title || "Category"}
+                                    className="w-16 h-16 rounded-md object-cover shadow"
+                                    loading="lazy"
+                                />
+                            </TableCell>
                             <TableCell>{cat.title}</TableCell>
                             <TableCell>{cat.slogan || "-"}</TableCell>
-                            <TableCell >
-                                {cat.description?.slice(0, 30) || "-"}
+                            <TableCell className="max-w-xs truncate">
+                                {cat.description || "-"}
                             </TableCell>
                         </TableRow>
                     ))

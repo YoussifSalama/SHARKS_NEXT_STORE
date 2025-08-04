@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllCategories } from "@/app/actions/category/category";
 import {
     Table,
     TableBody,
@@ -17,19 +16,19 @@ import { getAllSubCategories } from "@/app/actions/category/subcategory";
 const SubCategoriesTableLoader = () => {
     return (
         <>
-            {Array.from({ length: 10 }).map((_, idx) => (
+            {Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={idx} className="animate-pulse">
-                    <TableCell className="w-[100px]">
-                        <div className="h-4 bg-gray-200 rounded w-16"></div>
-                    </TableCell>
                     <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        <div className="w-16 h-16 bg-gray-200 rounded-md"></div>
                     </TableCell>
                     <TableCell>
                         <div className="h-4 bg-gray-200 rounded w-24"></div>
                     </TableCell>
                     <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-36"></div>
+                        <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    </TableCell>
+                    <TableCell>
+                        <div className="h-4 bg-gray-200 rounded w-48"></div>
                     </TableCell>
                 </TableRow>
             ))}
@@ -39,14 +38,14 @@ const SubCategoriesTableLoader = () => {
 
 const SubCategoriesTable = () => {
     const [loading, setLoading] = useState(true);
-    const [categories, setCategories] = useState<any[]>([]);
+    const [subCategories, setSubCategories] = useState<any[]>([]);
 
     const fetchCategories = async () => {
         setLoading(true);
         try {
             const result = await getAllSubCategories(1, 10, "asc");
             if (result && result.data) {
-                setCategories(result.data);
+                setSubCategories(result.data);
             }
         } finally {
             setLoading(false);
@@ -62,7 +61,7 @@ const SubCategoriesTable = () => {
             <TableCaption>Latest 10 sub categories</TableCaption>
             <TableHeader>
                 <TableRow>
-                    <TableHead className="w-[100px]">ID</TableHead>
+                    <TableHead className="w-[100px]">Cover</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Slogan</TableHead>
                     <TableHead >Description</TableHead>
@@ -71,11 +70,17 @@ const SubCategoriesTable = () => {
             <TableBody>
                 {loading ? (
                     <SubCategoriesTableLoader />
-                ) : categories.length > 0 ? (
-                    categories.map((cat) => (
+                ) : subCategories.length > 0 ? (
+                    subCategories.map((cat) => (
                         <TableRow key={cat.id}>
-                            <TableCell className="font-medium">{cat.id}</TableCell>
-                            <TableCell>{cat.title}</TableCell>
+                            <TableCell>
+                                <img
+                                    src={cat.img || "/placeholder.png"}
+                                    alt={cat.title || "Category"}
+                                    className="w-16 h-16 rounded-md object-cover shadow"
+                                    loading="lazy"
+                                />
+                            </TableCell>                            <TableCell>{cat.title}</TableCell>
                             <TableCell>{cat.slogan || "-"}</TableCell>
                             <TableCell >
                                 {cat.description?.slice(0, 30) || "-"}

@@ -102,7 +102,7 @@ const SpecificProduct = () => {
 
     useEffect(() => {
         if (productId) fetchOneProduct(+productId);
-    }, [productId, fetchOneProduct,refresh]);
+    }, [productId, fetchOneProduct, refresh]);
 
     return (
         <div className="space-y-4">
@@ -120,42 +120,51 @@ const SpecificProduct = () => {
 
 const ProductSkeletonLoader = () => {
     return (
-        <div className="space-y-6 animate-pulse">
+        <div className="space-y-8 animate-pulse">
             {/* Title */}
-            <div className="flex flex-col gap-3">
-                <span className="h-4 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                <span className="h-8 w-full rounded-sm bg-gray-200 shadow-md"></span>
+            <div className="space-y-2">
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                <div className="h-10 w-full bg-gray-200 rounded"></div>
             </div>
 
             {/* Description */}
-            <div className="flex flex-col gap-3">
-                <span className="h-4 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                <span className="h-40 w-full rounded-sm bg-gray-200 shadow-md"></span>
+            <div className="space-y-2">
+                <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                <div className="h-32 w-full bg-gray-200 rounded"></div>
             </div>
 
             {/* Status */}
-            <div className="flex flex-col gap-3">
-                <span className="h-4 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                <span className="h-8 w-full rounded-sm bg-gray-200 shadow-md"></span>
+            <div className="space-y-2">
+                <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                <div className="h-10 w-full bg-gray-200 rounded"></div>
             </div>
 
-            {/* Category & Actions */}
-            <div className="flex items-center justify-between gap-4 w-full">
-                <span className="h-4 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                <div className="flex gap-2 w-full justify-end">
-                    <span className="h-8 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                    <span className="h-8 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
+            {/* Category & Subcategory */}
+            <div className="space-y-2 flex justify-between">
+                <div className="h-4 w-40 bg-gray-200 rounded"></div>
+                <div className="grid grid-cols-2 gap-4 w-[30%]">
+                    <div className="h-10 w-full bg-gray-200 rounded"></div>
+                    <div className="h-10 w-full bg-gray-200 rounded"></div>
                 </div>
             </div>
 
-            {/* Final Row */}
-            <div className="flex justify-between gap-4 w-full">
-                <span className="h-4 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
-                <span className="h-8 w-[15%] rounded-sm bg-gray-200 shadow-md"></span>
+            {/* Variants */}
+            <div className="space-y-2 flex justify-between">
+                <div className="h-4 w-40 bg-gray-200 rounded"></div>
+                <div className="flex justify-end w-[15%]">
+                    <div className="h-10 w-full bg-gray-200 rounded"></div>
+                </div>
+            </div>
+
+            {/* Update Button */}
+            <div className="flex justify-end">
+                <div className="h-10 w-full bg-gray-200 rounded"></div>
             </div>
         </div>
     );
 };
+
+
 
 
 export default SpecificProduct;

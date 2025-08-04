@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -15,10 +16,29 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { DeleteProductDialog } from "../delete/DeleteProductDialog";
 
-type StatusStylesType = {
-    status: "active" | "inActive" | "draft";
-    style: string;
-};
+// Reusable Table Loader
+const TableSkeleton = ({ rows = 10, cols = 6 }: { rows?: number; cols?: number }) => (
+    <>
+        {Array.from({ length: rows }).map((_, idx) => (
+            <TableRow key={idx} className="animate-pulse">
+                {Array.from({ length: cols }).map((_, colIdx) => (
+                    <TableCell key={colIdx}>
+                        <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    </TableCell>
+                ))}
+            </TableRow>
+        ))}
+    </>
+);
+
+type StatusType = "active" | "inActive" | "draft";
+type StatusStylesType = { status: StatusType; label: string; style: string };
+
+const statusStyles: StatusStylesType[] = [
+    { status: "active", label: "Active", style: "bg-green-200 text-green-600" },
+    { status: "inActive", label: "Inactive", style: "bg-red-200 text-red-600" },
+    { status: "draft", label: "Draft", style: "bg-gray-200 text-gray-600" },
+];
 
 type Variant = {
     stock: number;
@@ -29,31 +49,58 @@ type Variant = {
     imgs: { id: number; url: string }[];
 };
 
-const ProductTable = ({
+export default function ProductTable({
     loading,
     products,
-    setRefresh
+    setRefresh,
 }: {
     loading: boolean;
     products: any[];
-    setRefresh: (refresh: number) => void
-}) => {
+    setRefresh: (refresh: number) => void;
+}) {
     const router = useRouter();
 
-    const statusStyles: StatusStylesType[] = [
-        {
-            status: "active",
-            style: "bg-green-200 border p-2 rounded-md shadow-md text-green-500",
-        },
-        {
-            status: "inActive",
-            style: "bg-red-200 border p-2 rounded-md shadow-md text-red-500",
-        },
-        {
-            status: "draft",
-            style: "bg-gray-200 border p-2 rounded-md shadow-md text-gray-500",
-        },
-    ];
+    const rows = useMemo(() => {
+        return products.map((prod) => {
+            const status = statusStyles.find((s) => s.status === prod.status);
+            const coverImg = prod.variants?.[0]?.imgs?.[0]?.url || "/placeholder.png";
+            const totalStock =
+                prod.variants?.reduce((total: number, v: Variant) => total + (v.stock ?? 0), 0) ?? 0;
+
+            return (
+                <TableRow key={prod.id}>
+                    <TableCell>
+                        <img
+                            src={coverImg}
+                            alt={prod.title}
+                            className="w-16 h-16 rounded object-cover shadow"
+                            loading="lazy"
+                        />
+                    </TableCell>
+                    <TableCell>{prod.title}</TableCell>
+                    <TableCell className="text-xs truncate max-w-xs">{prod.description || "-"}</TableCell>
+                    <TableCell>
+                        {status && (
+                            <span className={cn(status.style, "px-3 py-1 rounded-md text-sm font-medium")}>
+                                {status.label}
+                            </span>
+                        )}
+                    </TableCell>
+                    <TableCell>{totalStock}</TableCell>
+                    <TableCell className="space-x-2">
+                        <Button
+                            onClick={() => router.push(`products/${prod.id}`)}
+                            variant="outline"
+                            className="rounded-sm shadow bg-white opacity-85 hover:opacity-100 hover:scale-105"
+                        >
+                            <Eye />
+                        </Button>
+                        <DeleteProductDialog productId={prod.id} setRefresh={setRefresh} />
+                    </TableCell>
+                </TableRow>
+            );
+        });
+    }, [products, setRefresh, router]);
 
     return (
         <Table>
@@ -64,70 +111,18 @@ const ProductTable = ({
                     <TableHead>Title</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>In stock</TableHead>
+                    <TableHead>In Stock</TableHead>
                     <TableHead>Settings</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {loading ? (
-                    <ProductsLoader />
+                    <TableSkeleton rows={10} cols={6} />
                 ) : products.length > 0 ? (
-                    products.map((prod) => {
-                        const statusStyle = statusStyles.find(
-                            (s) => s.status === prod.status
-                        );
-
-                        const coverImg =
-                            prod.variants?.[0]?.imgs?.[0]?.url || "/placeholder.png";
-
-
-                        const totalStock = prod.variants
-                            ? prod.variants.reduce(
-                                (total: number, v: Variant) => total + (v.stock ?? 0),
-                                0
-                            )
-                            : 0;
-
-                        return (
-                            <TableRow key={prod.id}>
-                                <TableCell>
-                                    <img
-                                        src={coverImg}
-                                        className="w-24 h-24 rounded-md shadow-md object-cover"
-                                        loading="lazy"
-                                        alt={`product img ${prod.title}`}
-                                    />
-                                </TableCell>
-                                <TableCell>{prod.title}</TableCell>
-                                <TableCell className="text-xs">
-                                    {prod.description?.slice(0, 30) || "-"}
-                                </TableCell>
-                                <TableCell>
-                                    {statusStyle && (
-                                        <span className={cn(statusStyle.style, "px-4")}>
-                                            {statusStyle.status == "active" ? "Active" : (statusStyle.status == "inActive") ? "In active" : (statusStyle.status == "draft") && "Draft"}
-                                        </span>
-                                    )}
-                                </TableCell>
-                                <TableCell>{totalStock}</TableCell>
-                                <TableCell className="space-x-2">
-                                    <Button
-                                        onClick={() => {
-                                            router.push("products/" + prod.id);
-                                        }}
-                                        variant="outline"
-                                        className="rounded-sm shadow-md bg-white opacity-85 hover:opacity-100 hover:scale-105"
-                                    >
-                                        <Eye />
-                                    </Button>
-                                    <DeleteProductDialog productId={prod.id} setRefresh={setRefresh} />
-                                </TableCell>
-                            </TableRow>
-                        );
-                    })
+                    rows
                 ) : (
                     <TableRow>
-                        <TableCell colSpan={7} className="text-center text-gray-500">
+                        <TableCell colSpan={6} className="text-center text-gray-500">
                             No products found.
                         </TableCell>
                     </TableRow>
@@ -135,35 +130,4 @@ const ProductTable = ({
             </TableBody>
         </Table>
     );
-};
-
-const ProductsLoader = () => {
-    return (
-        <>
-            {Array.from({ length: 10 }).map((_, idx) => (
-                <TableRow key={idx} className="animate-pulse">
-                    <TableCell className="w-[100px]">
-                        <div className="h-4 bg-gray-200 rounded w-16"></div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-20"></div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-24"></div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-36"></div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-20"></div>
-                    </TableCell>
-                    <TableCell>
-                        <div className="h-4 bg-gray-200 rounded w-10"></div>
-                    </TableCell>
-                </TableRow>
-            ))}
-        </>
-    );
-};
-
-export default ProductTable;
+}
