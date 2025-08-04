@@ -160,7 +160,7 @@ export default function AddProductsFormMain({ product, setRefresh }: { product: 
 
                 }
             }} />
-            <Button className="w-full" type="submit"
+            <Button className="fixed bottom-6 px-8 right-6" type="submit"
             >
                 {loading ? <Loader classname="w-4 h-4" /> : "Update"}
             </Button>

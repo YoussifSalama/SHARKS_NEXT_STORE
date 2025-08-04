@@ -19,8 +19,6 @@ const Home = () => {
             <div className="p-2 border rounded-md shadow-md"><CategoriesTable/></div>
             <div className="p-2 border rounded-md shadow-md"><SubCategoriesTable/></div>
             <div className="p-2 border rounded-md shadow-md"><ProductsTable/></div>
-            <div className="p-2 border rounded-md shadow-md">tables</div>
-            <div className="p-2 border rounded-md shadow-md">tables</div>
         </div>
     </section>);
 }

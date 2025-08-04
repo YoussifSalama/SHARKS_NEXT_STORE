@@ -72,14 +72,15 @@ const CategoriesTable = () => {
                 ) : categories.length > 0 ? (
                     categories.map((cat) => (
                         <TableRow key={cat.id}>
-                            <TableCell>
+                            <div className="w-18 h-18 overflow-hidden   flex items-center justify-center">
                                 <img
                                     src={cat.img || "/placeholder.png"}
                                     alt={cat.title || "Category"}
-                                    className="w-16 h-16 rounded-md object-cover shadow"
+                                    className="w-[90%] h-[90%] object-cover shadow-md rounded-md border"
                                     loading="lazy"
                                 />
-                            </TableCell>
+                            </div>
+
                             <TableCell>{cat.title}</TableCell>
                             <TableCell>{cat.slogan || "-"}</TableCell>
                             <TableCell className="max-w-xs truncate">

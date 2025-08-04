@@ -69,14 +69,14 @@ export default function ProductTable({
 
             return (
                 <TableRow key={prod.id}>
-                    <TableCell>
+                    <div className="w-18 h-18 overflow-hidden   flex items-center justify-center">
                         <img
-                            src={coverImg}
-                            alt={prod.title}
-                            className="w-16 h-16 rounded object-cover shadow"
+                            src={coverImg || "/placeholder.png"}
+                            alt={prod.title || "Category"}
+                            className="w-[90%] h-[90%] object-cover shadow-md rounded-md border"
                             loading="lazy"
                         />
-                    </TableCell>
+                    </div>
                     <TableCell>{prod.title}</TableCell>
                     <TableCell className="text-xs truncate max-w-xs">{prod.description || "-"}</TableCell>
                     <TableCell>

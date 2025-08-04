@@ -26,6 +26,13 @@ const Navbar = () => {
             href: "/sharks-dashboard-2025/categories/add",
             icon: <CirclePlus className="w-4 h-4 mr-2" />,
         },
+        {
+            id: 3,
+            name: "Add Sub Category",
+            href: "/sharks-dashboard-2025/categories/sub-categories/add",
+            icon: <CirclePlus className="w-4 h-4 mr-2" />,
+
+        }
     ];
 
     return (
