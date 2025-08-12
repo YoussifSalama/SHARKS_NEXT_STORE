@@ -74,8 +74,12 @@ const Products = () => {
                 />
             )}
 
-            {!loading && products?.data ? (
-                <ProductTable loading={loading} products={products.data} setRefresh={setRefresh} />
+            {!loading ? (
+                products?.data && products.data.length > 0 ? (
+                    <ProductTable loading={loading} products={products.data} setRefresh={setRefresh} />
+                ) : (
+                    <NoProductsFound />
+                )
             ) : (
                 <ProductsLoader />
             )}
@@ -128,5 +132,14 @@ const ProductsLoader = () => {
         </>
     );
 };
+
+const NoProductsFound = () => {
+    return (
+        <div className="text-center py-10">
+            <p className="text-gray-500 text-lg">No Products Found.</p>
+        </div>
+    );
+};
+
 
 export default Products;

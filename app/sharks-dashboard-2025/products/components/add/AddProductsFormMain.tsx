@@ -55,8 +55,6 @@ export default function AddProductsFormMain() {
     };
 
     const handleSubmit = async (data: any) => {
-        console.log({ data });
-
         setLoading(true);
         try {
             const finalVariants = [];

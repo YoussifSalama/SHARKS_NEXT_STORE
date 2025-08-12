@@ -25,9 +25,11 @@ const productValidationSchema = z.object({
     variants: z.array(
         z.object({
             color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid hex color" }),
-            stock: z.coerce.number().min(1, "Stock min is 1."),
-            size: z.array(sizeEnum).min(1, "Select at least one size"),
-            price: z.coerce.number().min(1, "Price min is 1."),
+            offer: z.coerce.number().optional(),
+            sizes: z.array(z.object({
+                size: sizeEnum,
+                stock: z.number().min(1, "At least one item size required")
+            })), price: z.coerce.number().min(1, "Price min is 1."),
             imgs: z.array(z.union([z.string().url(), z.instanceof(File)])).min(1, "Please upload images for variant."),
         })
     )
@@ -68,6 +70,8 @@ const SpecificProduct = () => {
     const fetchOneProduct = useCallback(async (id: number) => {
         setLoading(true);
         const result = await getOneProduct(id);
+        console.log({ result });
+
         if (result.ok && result.data) {
             setProduct(result.data);
 
@@ -87,11 +91,12 @@ const SpecificProduct = () => {
                 variants:
                     result.data.variants?.map((v: any) => ({
                         color: v.color,
-                        stock: Number(v.stock),
-                        size: v.size as (
-                            | "XS" | "S" | "M" | "L" | "XL"
-                            | "2XL" | "3XL" | "4XL" | "5XL"
-                        )[],
+                        offer: v.offer ?? 0,
+
+                        sizes: v.sizes?.map((s: any) => ({
+                            size: s.size,
+                            stock: Number(s.stock),
+                        })) || [],
                         price: Number(v.price),
                         imgs: v.imgs?.map((imgObj: any) => imgObj.url) || []
                     })) || [],

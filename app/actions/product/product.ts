@@ -7,9 +7,10 @@ import jwt from "jsonwebtoken";
 type VariantType = {
     color: string;
     stock: number;
-    size: string[];
+    sizes: string[];
     price: number;
     imgs: string[];
+    offer: number;
     coverIndex?: number;
 };
 
@@ -57,10 +58,10 @@ export const addNewProduct = async (data: ProductInterface) => {
         const createdVariant = await prisma.variant.create({
             data: {
                 color: variant.color,
-                stock: variant.stock,
-                size: variant.size,
-                price: variant.price,
+                offer: variant.offer,
+                sizes: variant.sizes,
                 productId: newProduct.id,
+                price: variant.price ?? 0,
             },
         });
 
@@ -124,9 +125,13 @@ export const getAllProducts = async (
     if (select?.variants?.length) {
         variantsSelect = {};
         for (const field of select.variants) {
+            if (field === "stock" || field === "size" || field === "price") {
+                continue;
+            }
             variantsSelect[field] = true;
         }
     }
+
 
     let imgsInclude: any = true;
     if (select?.imgs && select.imgs > 0) {
@@ -270,10 +275,10 @@ export const updateProduct = async (productId: number, data: ProductInterface) =
         const createdVariant = await prisma.variant.create({
             data: {
                 color: variant.color,
-                stock: variant.stock,
-                size: variant.size,
-                price: variant.price,
+                sizes: variant.sizes,
+                offer: variant.offer,
                 productId,
+                price: variant.price ?? 0,
             },
         });
 
@@ -310,3 +315,34 @@ export const deleteProduct = async (productId: number) => {
     return { ok: true, message: "Product deleted successfully" };
 };
 
+
+export const getRandomProduct = async () => {
+    const productCount = await prisma.product.count();
+    const randomSkip = Math.floor(Math.random() * productCount);
+    const product = await prisma.product.findFirst({
+        skip: randomSkip
+    })
+
+    return {
+        ok: true,
+        data: product
+    }
+}
+
+export const getRandomProductOnSubCat = async (subCategoryId: number) => {
+    if (!subCategoryId) return { ok: false, message: "Sub category id is require." }
+    const subCatNo = Number(subCategoryId);
+    const productCount = await prisma.product.count();
+    const randomSkip = Math.floor(Math.random() * productCount);
+    const product = await prisma.product.findFirst({
+        skip: randomSkip,
+        where: {
+            subCategoryId: subCatNo
+        }
+    })
+
+    return {
+        ok: true,
+        data: product
+    }
+}

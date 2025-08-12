@@ -93,7 +93,7 @@ const AddProductsFormVariants = ({
                 <Label>
                     <span>Variants (color, sizes, stock, price, images)</span>
                     {errors?.variants && (
-                        <span className="text-destructive text-xs text-red-500 font-medium">
+                        <span className="text-xs text-red-500 font-medium">
                             {errors.variants.message as string}
                         </span>
                     )}
@@ -140,10 +140,10 @@ const AddProductsFormVariants = ({
                                 />
                                 <FormField
                                     control={control}
-                                    name={`variants.${index}.stock`}
+                                    name={`variants.${index}.price`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Stock</FormLabel>
+                                            <FormLabel>price</FormLabel>
                                             <FormControl>
                                                 <Input type="number" min={1} {...field} required />
                                             </FormControl>
@@ -153,12 +153,12 @@ const AddProductsFormVariants = ({
                                 />
                                 <FormField
                                     control={control}
-                                    name={`variants.${index}.price`}
+                                    name={`variants.${index}.offer`}
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Price</FormLabel>
+                                            <FormLabel>Offer</FormLabel>
                                             <FormControl>
-                                                <Input type="number" min={1} {...field} required />
+                                                <Input type="number" min={0} {...field} required />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -174,47 +174,49 @@ const AddProductsFormVariants = ({
                                 </Button>
                             </div>
 
-                            {/* Sizes */}
                             <FormField
                                 control={control}
-                                name={`variants.${index}.size`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <div className="mb-4">
-                                            <FormLabel className="text-base">Sizes</FormLabel>
-                                        </div>
-                                        <div className="flex flex-wrap gap-3">
-                                            {sizes.map((size) => {
-                                                const isChecked = field.value?.includes(size) || false;
-                                                return (
-                                                    <FormItem
-                                                        key={size}
-                                                        className="flex flex-row items-center gap-2"
-                                                    >
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={isChecked}
-                                                                onCheckedChange={(checked) => {
-                                                                    return checked
-                                                                        ? field.onChange([...(field.value || []), size])
-                                                                        : field.onChange(
-                                                                            field.value?.filter(
-                                                                                (v: string) => v !== size
-                                                                            )
-                                                                        );
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormLabel className="text-sm font-normal">
-                                                            {size}
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                );
-                                            })}
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                name={`variants.${index}.sizes`}
+                                render={({ field }) => {
+                                    const sizeValues: { size: string; stock: number }[] = field.value || [];
+
+                                    const handleSizeStockChange = (sizeLabel: string, newStock: number) => {
+                                        const filtered = sizeValues.filter((s) => s.size !== sizeLabel);
+                                        if (newStock > 0) {
+                                            field.onChange([...filtered, { size: sizeLabel, stock: newStock }]);
+                                        } else {
+                                            field.onChange(filtered);
+                                        }
+                                    };
+
+                                    const getStockValue = (sizeLabel: string) => {
+                                        return sizeValues.find((s) => s.size === sizeLabel)?.stock || "";
+                                    };
+
+                                    return (
+                                        <FormItem>
+                                            <div className="mb-4">
+                                                <FormLabel className="text-base">Sizes and Stock</FormLabel>
+                                            </div>
+                                            <div className="grid gap-3 grid-cols-2">
+                                                {sizes.map((sizeLabel) => (
+                                                    <div key={sizeLabel} className="flex items-center gap-4">
+                                                        <Label className="w-10">{sizeLabel}</Label>
+                                                        <Input
+                                                            type="number"
+                                                            min={0}
+                                                            placeholder="Stock"
+                                                            value={getStockValue(sizeLabel)}
+                                                            onChange={(e) => handleSizeStockChange(sizeLabel, parseInt(e.target.value || "0"))}
+                                                            className="w-24"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    );
+                                }}
                             />
 
                             {/* Image Upload */}

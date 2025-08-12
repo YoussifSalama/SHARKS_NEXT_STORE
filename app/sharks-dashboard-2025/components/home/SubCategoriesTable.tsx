@@ -58,8 +58,8 @@ const SubCategoriesTable = () => {
 
     return (
         <Table>
-            <div className="p-2">Sub categories</div>
             <TableHeader>
+            <div className="p-2">Sub categories</div>
                 <TableRow>
                     <TableHead className="w-[100px]">Cover</TableHead>
                     <TableHead>Title</TableHead>

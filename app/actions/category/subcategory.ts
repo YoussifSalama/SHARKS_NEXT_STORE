@@ -231,3 +231,16 @@ export const updateOneSubCategory = async (id: number, data: SubCategoryInterfac
         };
     }
 }
+
+export const getRandomSubCategory = async () => {
+    const subCategoryCount = await prisma.subCategory.count();
+    const randomSkip = Math.floor(Math.random() * subCategoryCount);
+    const subCategory = await prisma.subCategory.findFirst({
+        skip: randomSkip
+    })
+
+    return {
+        ok: true,
+        data: subCategory
+    }
+}

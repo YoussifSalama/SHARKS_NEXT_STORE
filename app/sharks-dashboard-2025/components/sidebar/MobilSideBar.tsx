@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartBarStacked, House, LogOut, Menu, Shirt } from "lucide-react";
+import { ChartBarStacked, CircleFadingPlus, House, LogOut, Menu, Shirt } from "lucide-react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
@@ -36,6 +36,12 @@ const MobilSideBar = () => {
             href: "/sharks-dashboard-2025/products",
             icon: <Shirt className="w-6 h-6" />,
         },
+        {
+            id: 4,
+            name: "More",
+            href: "/sharks-dashboard-2025/more",
+            icon: <CircleFadingPlus className="w-6 h-4" />
+        }
     ];
 
     return (

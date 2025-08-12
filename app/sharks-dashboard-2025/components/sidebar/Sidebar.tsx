@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartBarStacked, House, LogOut, Shirt } from "lucide-react";
+import { ChartBarStacked, CircleFadingPlus, House, LogOut, Shirt } from "lucide-react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { usePathname, useRouter } from "next/navigation";
@@ -34,6 +34,12 @@ const Sidebar = ({ isSidebarHovered }: { isSidebarHovered: boolean }) => {
             name: "Products",
             href: "/sharks-dashboard-2025/products",
             icon: <Shirt className="w-6 h-4" />
+        },
+        {
+            id: 4,
+            name: "More",
+            href: "/sharks-dashboard-2025/more",
+            icon: <CircleFadingPlus className="w-6 h-4" />
         }
     ]
     return (<aside className="w-full h-full flex flex-col overflow-hidden p-4 shadow-md rounded-r-md">

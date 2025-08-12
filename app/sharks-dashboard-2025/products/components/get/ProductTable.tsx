@@ -16,7 +16,6 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { DeleteProductDialog } from "../delete/DeleteProductDialog";
 
-// Reusable Table Loader
 const TableSkeleton = ({ rows = 10, cols = 6 }: { rows?: number; cols?: number }) => (
     <>
         {Array.from({ length: rows }).map((_, idx) => (
@@ -42,13 +41,17 @@ const statusStyles: StatusStylesType[] = [
 
 type Variant = {
     stock: number;
-    size: string;
+    sizes: string;
     color: string;
     id: number;
     price: number;
     imgs: { id: number; url: string }[];
 };
 
+type Size = {
+    size: string,
+    stock: number
+}
 export default function ProductTable({
     loading,
     products,
@@ -64,12 +67,10 @@ export default function ProductTable({
         return products.map((prod) => {
             const status = statusStyles.find((s) => s.status === prod.status);
             const coverImg = prod.variants?.[0]?.imgs?.[0]?.url || "/placeholder.png";
-            const totalStock =
-                prod.variants?.reduce((total: number, v: Variant) => total + (v.stock ?? 0), 0) ?? 0;
 
             return (
                 <TableRow key={prod.id}>
-                    <div className="w-18 h-18 overflow-hidden   flex items-center justify-center">
+                    <div className="w-18 h-18 overflow-hidden flex items-center justify-center">
                         <img
                             src={coverImg || "/placeholder.png"}
                             alt={prod.title || "Category"}
@@ -86,7 +87,6 @@ export default function ProductTable({
                             </span>
                         )}
                     </TableCell>
-                    <TableCell>{totalStock}</TableCell>
                     <TableCell className="space-x-2">
                         <Button
                             onClick={() => router.push(`products/${prod.id}`)}
@@ -111,7 +111,6 @@ export default function ProductTable({
                     <TableHead>Title</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>In Stock</TableHead>
                     <TableHead>Settings</TableHead>
                 </TableRow>
             </TableHeader>

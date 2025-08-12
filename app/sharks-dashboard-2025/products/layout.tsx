@@ -11,7 +11,7 @@ const Categorylayout = ({ children }: { children: React.ReactNode }) => {
             <Navbar />
         }
         {/* content */}
-        <div className="p-4 border rounded-b-md rounded-tr-md shadow-md h-full shadow-md">
+        <div className="p-4 border rounded-b-md rounded-tr-md h-full shadow-md">
             <CategoryProvider>
                 {children}
             </CategoryProvider>

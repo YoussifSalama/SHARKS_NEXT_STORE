@@ -129,8 +129,8 @@ export default function ProductsTable() {
 
     return (
         <Table>
-            <div className="p-2">Products</div>
             <TableHeader>
+            <div className="p-2">Products</div>
                 <TableRow>
                     <TableHead>Cover</TableHead>
                     <TableHead>Title</TableHead>

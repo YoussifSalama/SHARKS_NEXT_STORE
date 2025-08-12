@@ -2,7 +2,7 @@
 
 import { useEdgeStore } from "@/lib/edgestore";
 
-type BucketName = "publicFiles" | "category" | "subcategory" | "product";
+type BucketName = "publicFiles" | "category" | "subcategory" | "product" | "more";
 
 export const useFileUploader = (setPogress: (progress: number) => void) => {
     const { edgestore } = useEdgeStore();

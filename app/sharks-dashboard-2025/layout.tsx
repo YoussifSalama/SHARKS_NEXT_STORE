@@ -7,6 +7,7 @@ import Loader from "./features/Loader";
 import { usePathname, useRouter } from "next/navigation";
 import MobilSideBar from "./components/sidebar/MobilSideBar";
 
+
 const SharksDashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const [isClient, setIsClient] = useState(false);
     const [token, setToken] = useState<string | undefined>(undefined);

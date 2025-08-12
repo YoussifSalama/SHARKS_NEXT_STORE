@@ -21,9 +21,11 @@ const productValidationSchema = z.object({
     variants: z.array(
         z.object({
             color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { message: "Invalid hex color" }),
-            stock: z.coerce.number().min(1, "Stock min is 1."),
-            size: z.array(sizeEnum).min(1, "Select at least one size"),
-            price: z.coerce.number().min(1, "Price min is 1."),
+            offer: z.coerce.number().optional(),
+            sizes: z.array(z.object({
+                size: sizeEnum,
+                stock: z.number().min(1, "At least one item size required")
+            })), price: z.coerce.number().min(1, "Price min is 1."),
             imgs: z.array(z.instanceof(File)).min(1, "Please upload images for variant."),
         })
     ).min(1, "At least one variant is required").superRefine((variants, ctx) => {

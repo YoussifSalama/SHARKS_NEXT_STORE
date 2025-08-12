@@ -220,3 +220,31 @@ export const updateOneCategory = async (id: number, data: AddNewCategoryInterfac
         };
     }
 }
+
+export const getCategoriesandItsSubCategoriesForNavbar = async (
+    limitForCats: number,
+    limitForSubCats: number
+) => {
+    const categories = await prisma.category.findMany({
+        take: Number(limitForCats),
+        select: {
+            id: true,
+            title: true,
+            img: true,
+            subCategories: {
+                take: Number(limitForSubCats),
+                select: {
+                    id: true,
+                    title: true,
+                    slogan: true,
+                    img: true
+                }
+            }
+        }
+    });
+
+    return {
+        ok: true,
+        data: categories
+    };
+};
