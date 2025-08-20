@@ -1,7 +1,9 @@
 import { getCategoriesandItsSubCategoriesForNavbar } from "@/app/actions/category/category";
 import Hero from "@/app/components/about/Hero";
 import { CommonSection3 } from "@/app/features/common/CommonSections";
+import Footer from "@/app/features/footer/Footer";
 import Navbar from "@/app/features/Navbar/Navbar";
+import NavbarMob from "@/app/features/Navbar/NavbarMob";
 
 type Direction = "ltr" | "rtl";
 
@@ -14,7 +16,7 @@ interface SectionData {
 }
 const AboutUs = async () => {
 
-    const navResult = await getCategoriesandItsSubCategoriesForNavbar(5, 5);
+    const navResult = await getCategoriesandItsSubCategoriesForNavbar(10, 10);
 
     const sectionsData: SectionData[] = [
         {
@@ -53,6 +55,8 @@ const AboutUs = async () => {
         <div>
             {/* navbar */}
             <Navbar data={navResult.data} />
+            {/* @ts-ignore */}
+            <NavbarMob data={navResult.data} />
             <div className="container">
 
                 {/* about us */}
@@ -62,6 +66,8 @@ const AboutUs = async () => {
                     <CommonSection3 key={id} data={data} dir={data.direction} />
                 ))}
             </div>
+            {/* footer */}
+            <Footer />
         </div>
     );
 }

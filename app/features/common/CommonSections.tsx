@@ -1,5 +1,4 @@
 import { CommonButton1, CommonButton2 } from "@/app/features/common/CommonButtons";
-import CommonSectionTitle from "@/app/features/common/CommonSectionTitle";
 import clsx from "clsx";
 
 export const CommonSection1 = ({ data }: { data: any }) => {

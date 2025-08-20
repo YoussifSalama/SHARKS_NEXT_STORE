@@ -1,9 +1,8 @@
-import { Box, Recycle, Sprout } from "lucide-react";
 
 interface Service {
     icon: React.ReactNode;
     title: string;
-    description: string;
+    description?: string;
 }
 interface Header {
     title: string;
@@ -15,7 +14,7 @@ interface CommonServicesProps {
     header: Header;
 }
 
-const ServiceCard = ({ icon, title, description }: Service) => {
+export const ServiceCard = ({ icon, title, description }: Service) => {
     return (
         <article
             className="flex items-center justify-center flex-col gap-4 text-center max-w-xs"
@@ -36,7 +35,6 @@ const CommonServices = ({ services, header }: CommonServicesProps) => {
             <header className="text-center mb-10">
                 <h2 className="text-2xl md:text-3xl font-bold text-main-1">
                     {header.title}
-                    
                 </h2>
                 <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
                     {header.description}

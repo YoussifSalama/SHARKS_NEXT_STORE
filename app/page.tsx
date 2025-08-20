@@ -7,6 +7,10 @@ import { CommonSection1, CommonSection2 } from "./features/common/CommonSections
 import CommonServices from "./features/common/CommonServices";
 import { getHomeData } from "./actions/client/home";
 import { Box, Recycle, Sprout } from "lucide-react";
+import Footer from "./features/footer/Footer";
+import NavbarMob from "./features/Navbar/NavbarMob";
+import FloatingWhatsAppComponent from "./features/FloatingWhatsApp";
+import FloatingWhatsApp from "./features/FloatingWhatsApp";
 
 
 
@@ -37,14 +41,15 @@ export default async function Home() {
     },
   ];
 
-  const navResult = await getCategoriesandItsSubCategoriesForNavbar(5, 5);
+  const navResult = await getCategoriesandItsSubCategoriesForNavbar(10, 10);
   const pageResult = await getHomeData();
-  console.log({ pageResult: pageResult.rest });
 
   return (
     <div>
 
       <Navbar data={navResult.data} />
+      {/* @ts-ignore */}
+      <NavbarMob data={navResult.data} />
       {/* hero */}
       {
         pageResult?.section1 &&
@@ -64,6 +69,12 @@ export default async function Home() {
       })}
       {/* service */}
       <CommonServices services={services} header={headerForServices} />
+      {/* floating whatsapp */}
+      <FloatingWhatsAppComponent />
+      {/* footer */}
+      <FloatingWhatsApp />
+
+      <Footer />
     </div>
   );
 }

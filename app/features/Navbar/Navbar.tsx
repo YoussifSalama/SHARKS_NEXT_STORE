@@ -8,12 +8,12 @@ import Link from "next/link";
 import clsx from "clsx";
 import Header from "../header/Header";
 
-const Navbar = ({ data }: { data: any }) => {
+const Navbar = ({ data, home }: { data: any, home?: boolean }) => {
     const [flow, setFlow] = useState<boolean>(false);
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 50) {
+            if (window.scrollY > 100) {
                 setFlow(true);
             } else {
                 setFlow(false);
@@ -27,8 +27,10 @@ const Navbar = ({ data }: { data: any }) => {
         };
     }, []);
 
+    const fixedColor = (home !== undefined) && home == false;
+
     return (
-        <div >
+        <div className={clsx(`${(fixedColor && flow) ? "bg-main-3 text-main-2" : flow ? "bg-main-3 text-main-2" : "bg-main-2 text-main-3"}`, "relative z-10")}>
             <Header route={{ title: "Contact Us", href: "/contact-us" }} />
 
             <nav
@@ -38,21 +40,21 @@ const Navbar = ({ data }: { data: any }) => {
                 )}
             >
 
-                <div className={clsx("container flex items-center justify-between px-10 text-main-2")}>
+                <div className={clsx("container flex items-center justify-between px-10")}>
                     <Link href="/">
                         <h1 className="text-2xl">
                             Sharks
                         </h1>
                     </Link>
-                    <div className="w-full">
+                    <div className="w-full max-lg:hidden">
                         <NavigationMenuMain data={data} flow={flow} />
                     </div>
-                    <div className="*:w-4 *:h-4 flex items-center gap-8">
+                    <Link href={"/shop/products"} className="*:w-4 *:h-4 flex items-center gap-8">
                         {/* search */}
                         <span>
                             <Search className="w-6 h-6 font-light" />
                         </span>
-                    </div>
+                    </Link>
                 </div>
             </nav>
         </div>

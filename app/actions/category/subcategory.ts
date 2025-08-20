@@ -244,3 +244,17 @@ export const getRandomSubCategory = async () => {
         data: subCategory
     }
 }
+
+
+export const getOneSubCategory = async (id: number) => {
+    const subCategory = await prisma.subCategory.findFirst({ where: { id } });
+    if (!subCategory) return {
+        ok: false,
+        message: "Sub category not found."
+    }
+    return {
+        ok: true,
+        message: "success",
+        data: subCategory
+    }
+}

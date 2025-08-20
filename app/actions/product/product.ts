@@ -346,3 +346,222 @@ export const getRandomProductOnSubCat = async (subCategoryId: number) => {
         data: product
     }
 }
+
+export const getAllProductsForSubCatDynamicPage = async (
+    page: number = 1,
+    limit: number = 10,
+    subCatId: number
+) => {
+    if (!subCatId) return {
+        ok: false,
+        message: "Sub category id is required."
+    };
+    const pageNo = page || 1;
+    const limitNo = limit || 10;
+    const skipNo = (pageNo - 1) * limitNo;
+
+
+    let where: any = {};
+
+    where.status = "active";
+    where.subCategoryId = subCatId;
+
+
+
+    let queryOptions: any = {
+        skip: skipNo,
+        take: limitNo,
+        where,
+        orderBy: { createdAt: "asc" },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            variants: {
+                select: {
+                    color: true,
+                    price: true,
+                    sizes: true,
+                    offer: true,
+                    imgs: true
+                }
+            }
+        }
+    };
+
+
+    const [products, total] = await Promise.all([
+        prisma.product.findMany(queryOptions),
+        prisma.product.count({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limitNo);
+
+    return {
+        data: products,
+        meta: {
+            page: pageNo,
+            limit: limitNo,
+            total,
+            totalPages,
+            hasNext: pageNo < totalPages,
+            hasPrev: pageNo > 1,
+        },
+    };
+};
+
+export const getRandomProducts = async () => {
+    const productsCount = await prisma.product.count();
+    const randomSkip = Math.floor(Math.random() * productsCount);
+    const randomProducts = await prisma.product.findMany({
+        skip: randomSkip,
+        take: 10,
+        orderBy: { createdAt: "asc" },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            variants: {
+                select: {
+                    color: true,
+                    price: true,
+                    sizes: true,
+                    offer: true,
+                    imgs: true
+                }
+            }
+        }
+    });
+
+    return {
+        ok: true,
+        message: "success",
+        data: randomProducts
+    }
+}
+
+interface GetProductsParams {
+    search?: string;
+    page?: number;
+    limit?: number;
+    sortField?: "createdAt" | "price";
+    sortOrder?: "asc" | "desc";
+    status?: "active" | "inActive" | "draft" | "all";
+    categoryId?: number;
+    subCategoryId?: number;
+}
+
+
+export const getProducts = async (params: GetProductsParams & { isBest?: boolean }) => {
+    const {
+        search = "",
+        page = 1,
+        limit = 10,
+        sortField = "createdAt",
+        sortOrder = "desc",
+        status = "all",
+        categoryId,
+        subCategoryId,
+        isBest = false,
+    } = params;
+
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    // Status filter
+    if (status !== "all") {
+        where.status = status;
+    }
+
+    // Category/SubCategory filter
+    if (categoryId) {
+        where.subCategory = { categoryId };
+    }
+    if (subCategoryId) {
+        where.subCategoryId = subCategoryId;
+    }
+
+    // Search filter
+    if (search.trim()) {
+        const searchNum = Number(search);
+        where.OR = [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+            { variants: { some: { color: { contains: search, mode: "insensitive" } } } },
+            ...(isNaN(searchNum) ? [] : [{ variants: { some: { price: searchNum } } }])
+        ];
+    }
+
+
+    // Fetch products with variants included
+    const [products, total] = await Promise.all([
+        prisma.product.findMany({
+            skip,
+            take: limit,
+            where,
+            orderBy: sortField === "createdAt" ? { createdAt: sortOrder } : undefined,
+            include: {
+                variants: { include: { imgs: true } },
+                subCategory: { include: { category: true } },
+            },
+        }),
+        prisma.product.count({ where }),
+    ]);
+
+    // Flatten all variants with product info
+    let variantsList: any[] = [];
+    products.forEach(product => {
+        product.variants.forEach(variant => {
+            variantsList.push({
+                ...variant,
+                product: {
+                    id: product.id,
+                    title: product.title,
+                    description: product.description,
+                    createdAt: product.createdAt,
+                    status: product.status,
+                    views: product.views,
+                    clicks: product.clicks,
+                }
+            });
+        });
+    });
+
+    // Sort by price if requested
+    if (sortField === "price") {
+        variantsList.sort((a, b) => (sortOrder === "asc" ? a.price - b.price : b.price - a.price));
+    }
+
+    // Sort by createdAt if requested (variants use product timestamp)
+    if (sortField === "createdAt") {
+        variantsList.sort((a, b) => {
+            const timeA = new Date(a.product.createdAt).getTime();
+            const timeB = new Date(b.product.createdAt).getTime();
+            return sortOrder === "asc" ? timeA - timeB : timeB - timeA;
+        });
+    }
+
+    // Sort by "Best" (product clicks + views)
+    if (isBest) {
+        variantsList.sort((a, b) => {
+            const scoreA = (a.product.clicks ?? 0) + (a.product.views ?? 0);
+            const scoreB = (b.product.clicks ?? 0) + (b.product.views ?? 0);
+            return scoreB - scoreA; // Descending
+        });
+    }
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+        data: variantsList,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPages,
+            hasNext: page < totalPages,
+            hasPrev: page > 1,
+        },
+    };
+};
