@@ -9,11 +9,12 @@ import Footer from "@/app/features/footer/Footer";
 import Navbar from "@/app/features/Navbar/Navbar";
 
 type PageProps = {
-    searchParams: Record<string, string | string[] | undefined>;
+    searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
 const DynamicSubCategoryPage = async ({ searchParams }: PageProps) => {
-    const subId = searchParams.subId ? Number(searchParams.subId) : null;
+    const resolvedSearchParams = await searchParams;
+    const subId = resolvedSearchParams.subId ? Number(resolvedSearchParams.subId) : null;
     const navPromise = getCategoriesandItsSubCategoriesForNavbar(10, 10);
 
     if (!subId || isNaN(subId)) {

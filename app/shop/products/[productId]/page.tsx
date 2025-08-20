@@ -8,7 +8,7 @@ import NavbarMob from "@/app/features/Navbar/NavbarMob";
 import { Loader2 } from "lucide-react";
 import { Suspense } from "react";
 
-type ParamsType = { [key: string]: string | string[] | undefined };
+type ParamsType = Promise<{ productId: string }>;
 type PropsType = { params: ParamsType };
 
 const Loading = () => (
@@ -24,17 +24,25 @@ const ErrorComponent = ({ message }: { message: string }) => (
 );
 
 const DynamicProduct = async ({ params }: PropsType) => {
-    const productPromise = getOneProduct(Number(params.productId));
+    const resolvedParams = await params;
+    const productId = Number(resolvedParams.productId);
+
+    const productPromise = getOneProduct(productId);
     const navPromise = getCategoriesandItsSubCategoriesForNavbar(10, 10);
     const moreProductsPromise = getRandomProducts();
 
-    const [productResponse, navResult, moreProductsResult] = await Promise.all([productPromise, navPromise, moreProductsPromise]);
+    const [productResponse, navResult, moreProductsResult] = await Promise.all([
+        productPromise,
+        navPromise,
+        moreProductsPromise
+    ]);
 
     if (!productResponse?.ok || !productResponse?.data) {
         return <ErrorComponent message="Product not found." />;
     }
 
     const product = productResponse.data;
+
     const moreProductsData = moreProductsResult?.data?.map((product: any) =>
         product.variants.map((variant: any) => ({
             id: product.id,
@@ -58,11 +66,9 @@ const DynamicProduct = async ({ params }: PropsType) => {
                 <ProductDisplay product={product} />
                 <MoreProducts data={moreProductsData} />
             </Suspense>
-
             <Footer />
         </section>
     );
 };
-
 
 export default DynamicProduct;
