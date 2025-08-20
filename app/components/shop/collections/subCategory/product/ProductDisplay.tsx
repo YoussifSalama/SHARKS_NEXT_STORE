@@ -1,5 +1,6 @@
 "use client";
 
+import { RecordProductClicks } from "@/app/actions/product/product";
 import CommonServices, { ServiceCard } from "@/app/features/common/CommonServices";
 import CommonWhatsapp from "@/app/features/common/CommonWhatsapp";
 import Loader from "@/app/sharks-dashboard-2025/features/Loader";
@@ -71,11 +72,17 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
         }
     }, [activeVariant]);
 
+
+    const handleProductClick = async (id: number) => {
+        await RecordProductClicks(id);
+    }
+
     if (loading) return (
         <div className="h-dvh flex items-center justify-center">
             <Loader classname="w-12 h-12" />
         </div>
     );
+
 
     if (!activeVariant) return (
         <div className="h-dvh flex items-center justify-center">
@@ -161,6 +168,7 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
 
                         <div className="flex items-center justify-end mt-8">
                             <CommonWhatsapp
+                                onClick={handleProductClick}
                                 productId={product.id}
                                 title={product.title}
                                 subCategory={product.subCategory.title}

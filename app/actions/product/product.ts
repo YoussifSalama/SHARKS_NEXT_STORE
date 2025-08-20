@@ -223,6 +223,10 @@ export const getOneProduct = async (productId: number) => {
         ok: false,
         message: "Product not found."
     }
+    const updated = await prisma.product.update({
+        where: { id:productId },
+        data: { views: { increment: 1 } },
+    });
     return {
         ok: true,
         message: "Success",
@@ -563,5 +567,50 @@ export const getProducts = async (params: GetProductsParams & { isBest?: boolean
             hasNext: page < totalPages,
             hasPrev: page > 1,
         },
+    };
+};
+
+
+export const RecordProductView = async (id: number) => {
+    const product = await prisma.product.findUnique({ where: { id } });
+
+    if (product) {
+        const updated = await prisma.product.update({
+            where: { id },
+            data: { views: { increment: 1 } },
+        });
+
+        return {
+            ok: true,
+            message: "success",
+            views: updated.views,
+        };
+    }
+
+    return {
+        ok: false,
+        message: "failed",
+    };
+};
+
+export const RecordProductClicks = async (id: number) => {
+    const product = await prisma.product.findUnique({ where: { id } });
+
+    if (product) {
+        const updated = await prisma.product.update({
+            where: { id },
+            data: { clicks: { increment: 1 } },
+        });
+
+        return {
+            ok: true,
+            message: "success",
+            clicks: updated.clicks,
+        };
+    }
+
+    return {
+        ok: false,
+        message: "failed",
     };
 };

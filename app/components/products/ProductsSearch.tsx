@@ -26,63 +26,101 @@ const SearchBar = () => {
     const [isBest, setIsBest] = useState(false);
     const [variants, setVariants] = useState<any[]>([]);
     const [isPending, startTransition] = useTransition();
+    const [page, setPage] = useState(1);
+    const limit = 20;
+    const [hasMore, setHasMore] = useState(true);
 
-    useEffect(() => {
+    const fetchProducts = async (reset = false) => {
         startTransition(async () => {
             try {
                 const res = await getProducts({
                     search: queryTerm || "",
-                    page: 1,
-                    limit: 20,
+                    page,
+                    limit,
                     sortField: sortBy.startsWith("price") ? "price" : "createdAt",
                     sortOrder: sortBy.endsWith("asc") ? "asc" : "desc",
                     isBest,
                 });
-                setVariants(res.data || []);
+
+                const newData = res.data || [];
+                setVariants((prev) => reset ? newData : [...prev, ...newData]);
+                setHasMore(newData.length === limit);
             } catch (err) {
                 console.error("Failed to fetch products:", err);
-                setVariants([]);
+                if (reset) setVariants([]);
             }
         });
+    };
+
+    useEffect(() => {
+        setPage(1);
+        fetchProducts(true);
     }, [queryTerm, sortBy, isBest]);
 
+    useEffect(() => {
+        if (page > 1) fetchProducts();
+    }, [page]);
+
     return (
-        <div className="flex flex-col gap-4 items-center w-full">
-            <div className="flex flex-wrap justify-center items-center gap-3">
+        <div className="flex flex-col gap-4 items-center w-full overflow-hidden">
+            <div className="flex flex-wrap justify-center items-center gap-3 py-4">
                 <SearchInputBar
                     value={searchTerm}
                     onChange={setSearchTerm}
-                    onSearch={() => setQueryTerm(searchTerm.trim())}
-                    onClear={() => setQueryTerm("")}
+                    onSearch={() => {
+                        setPage(1);
+                        setQueryTerm(searchTerm.trim());
+                    }}
+                    onClear={() => {
+                        setPage(1);
+                        setQueryTerm("");
+                    }}
                 />
                 <SortSelector value={sortBy} onChange={setSortBy} />
                 <BestSwitch value={isBest} onChange={setIsBest} />
             </div>
 
-            {isPending ? (
+            {isPending && variants.length === 0 ? (
                 <div className="flex justify-center items-center mt-10 h-dvh">
                     <Loader2 className="animate-spin w-8 h-8 text-main-3" />
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8 mt-6 w-full">
-                    {variants.map((variant) => (
-                        <Link
-                            key={variant.id}
-                            href={`/shop/products/${variant.product.id}`}
-                            className="scale-85 space-y-7"
-                        >
-                            {/* @ts-ignore */}
-                            <CommonImagesPreview images={variant.imgs?.map(img => img.url) || []} />
-                            <CommonProductMeta
-                                title={variant.product.title}
-                                color={variant.color}
-                                sizes={variant.sizes}
-                                price={variant.price}
-                                badge={variant.offer > 0 ? `-${variant.offer}%` : undefined}
-                            />
-                        </Link>
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 gap-y-8 mt-6 w-full">
+                        {variants.map((variant) => (
+                            <Link
+                                key={variant.id}
+                                href={`/shop/products/${variant.product.id}`}
+                                className="scale-85 space-y-7"
+                            >
+                                {/* @ts-ignore */}
+                                <CommonImagesPreview images={variant.imgs?.map(img => img.url) || []} />
+                                <CommonProductMeta
+                                    title={variant.product.title}
+                                    color={variant.color}
+                                    sizes={variant.sizes}
+                                    price={variant.price}
+                                    badge={variant.offer > 0 ? `-${variant.offer}%` : undefined}
+                                />
+                            </Link>
+                        ))}
+                    </div>
+
+                    {hasMore && (
+                        <div className="flex justify-center mt-10">
+                            {isPending ? (
+                                <Loader2 className="animate-spin w-6 h-6 text-main-3" />
+                            ) : (
+                                <Button
+                                    className="text-main-2 bg-main-1 hover:bg-main-1/70 rounded-none px-8 py-6"
+                                    onClick={() => setPage((prev) => prev + 1)}
+                                >
+                                    Load More
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

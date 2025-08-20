@@ -19,25 +19,7 @@ const Navbar = () => {
             name: "Hero",
             href: "/sharks-dashboard-2025/more",
             icon: <Image className="w-4 h-4 mr-2" />,
-        },
-        {
-            id: 2,
-            name: "Global Features Cards",
-            href: "/sharks-dashboard-2025/more/global-features",
-            icon: <CirclePlus className="w-4 h-4 mr-2" />,
-        },
-        {
-            id: 3,
-            name: "Products Features Cards",
-            href: "/sharks-dashboard-2025/more/products-features",
-            icon: <CirclePlus className="w-4 h-4 mr-2" />,
-        },
-        {
-            id: 4,
-            name: "Global Offer Card",
-            href: "/sharks-dashboard-2025/more/global-offer",
-            icon: <CirclePlus className="w-4 h-4 mr-2" />,
-        },
+        }
     ];
 
     return (

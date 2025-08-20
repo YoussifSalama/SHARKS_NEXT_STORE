@@ -54,7 +54,7 @@ const ShopMenu = ({ categories }: { categories: CategoryWithSubs[] }) => {
 
     return (
         <li
-            className="relative px-5 py-2.5 flex gap-2 items-center text-lg cursor-pointer hover:bg-main-2 transition-colors duration-300"
+            className="relative px-5 py-2.5 flex gap-2 items-center text-md cursor-pointer hover:bg-main-2 transition-colors duration-300"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             role="menuitem"
@@ -90,7 +90,7 @@ const AboutUs = () => {
     return (
         <Link href="/pages/about-us">
             <li
-                className="relative px-5 py-2.5 flex gap-2 items-center text-lg cursor-pointer hover:bg-main-2 transition-colors duration-300"
+                className="relative px-5 py-2.5 flex gap-2 items-center text-md cursor-pointer hover:bg-main-2 transition-colors duration-300"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 aria-expanded={hovered}
@@ -107,7 +107,7 @@ const StoreLocation = () => {
     return (
         <Link href="/pages/store-location">
             <li
-                className="relative px-5 py-2.5 flex gap-2 items-center text-lg cursor-pointer hover:bg-main-2 transition-colors duration-300"
+                className="relative px-5 py-2.5 flex gap-2 items-center text-md cursor-pointer hover:bg-main-2 transition-colors duration-300"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 aria-expanded={hovered}
@@ -125,7 +125,7 @@ const ContactUs = () => {
     return (
         <Link href="/pages/contact-us">
             <li
-                className="relative px-5 py-2.5 flex gap-2 items-center text-lg cursor-pointer hover:bg-main-2 transition-colors duration-300"
+                className="relative px-5 py-2.5 flex gap-2 items-center text-md cursor-pointer hover:bg-main-2 transition-colors duration-300"
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 aria-expanded={hovered}

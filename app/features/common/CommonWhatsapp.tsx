@@ -9,9 +9,11 @@ interface CommonWhatsappProps {
     size?: string;
     color?: string;
     phoneNumber?: string;
+    onClick:Function
 }
 
 const CommonWhatsapp: React.FC<CommonWhatsappProps> = ({
+    onClick,
     productId,
     title,
     subCategory,
@@ -32,6 +34,7 @@ const CommonWhatsapp: React.FC<CommonWhatsappProps> = ({
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={()=>{onClick(productId)}}
             className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition"
         >
             <img
