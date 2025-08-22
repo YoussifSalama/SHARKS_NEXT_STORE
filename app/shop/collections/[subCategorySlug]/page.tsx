@@ -7,6 +7,7 @@ import MoreProducts from "@/app/components/shop/collections/subCategory/MoreProd
 import Products from "@/app/components/shop/collections/subCategory/Products";
 import Footer from "@/app/features/footer/Footer";
 import Navbar from "@/app/features/Navbar/Navbar";
+import NavbarMob from "@/app/features/Navbar/NavbarMob";
 
 type PageProps = {
     searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -56,6 +57,8 @@ const DynamicSubCategoryPage = async ({ searchParams }: PageProps) => {
     return (
         <div className="relative">
             <Navbar data={navResult?.data} home={false} />
+            {/* @ts-ignore */}
+            <NavbarMob data={navResult?.data}/>
             <div className="space-y-[37px]">
                 <Hero title={title} img={img as string} />
                 <CommonSubCategoryHead title={title} description={description} />

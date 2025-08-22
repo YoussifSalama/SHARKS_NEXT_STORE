@@ -1,6 +1,7 @@
 "use client";
 import clsx from "clsx";
 import { MoveRight } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export const CommonButton1 = ({
@@ -8,11 +9,13 @@ export const CommonButton1 = ({
     buttonClassName,
     titleClassName,
     iconClassName,
+    to
 }: {
     title: string;
     buttonClassName?: string;
     titleClassName?: string;
     iconClassName?: string;
+    to?: string
 }) => {
     const [hover, setHover] = useState(false);
     const titleRef = useRef<HTMLSpanElement>(null);
@@ -38,6 +41,9 @@ export const CommonButton1 = ({
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             type="button"
+            onClick={() => {
+                to && redirect(to)
+            }}
         >
             <span ref={titleRef} className={clsx("capitalize text-md", titleClassName)}>{title}</span>
 
@@ -59,11 +65,13 @@ export const CommonButton2 = ({
     buttonClassName,
     titleClassName,
     iconClassName,
+    to
 }: {
     title: string;
     buttonClassName?: string;
     titleClassName?: string;
     iconClassName?: string;
+    to?: string
 }) => {
     const [hover, setHover] = useState(false);
     const titleRef = useRef<HTMLSpanElement>(null);
@@ -88,6 +96,9 @@ export const CommonButton2 = ({
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             type="button"
+            onClick={() => {
+                to && redirect(to)
+            }}
         >
             <span ref={titleRef} className={clsx("capitalize text-md", titleClassName)}>{title}</span>
 

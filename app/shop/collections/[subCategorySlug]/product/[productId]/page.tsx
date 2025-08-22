@@ -42,6 +42,7 @@ const DynamicProduct = async ({ params }: PropsType) => {
     }
 
     const product = productResponse.data;
+    
 
     const moreProductsData = moreProductsResult?.data?.map((product: any) =>
         product.variants.map((variant: any) => ({

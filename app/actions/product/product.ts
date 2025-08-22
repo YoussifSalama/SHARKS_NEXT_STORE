@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 type VariantType = {
     color: string;
     stock: number;
-    sizes: string[];
+    sizes: { size: string, stock: any }[];
     price: number;
     imgs: string[];
     offer: number;
@@ -43,12 +43,20 @@ export const addNewProduct = async (data: ProductInterface) => {
 
     if (!findSubCategory || !findCategory) return { ok: false, message: "Category or SubCategory not found." };
 
+    const stock = variants.map((variant) => {
+        const sizes = variant.sizes;
+        let temp = 0;
+        sizes.forEach((size) => {
+            temp += Number(size.stock);
+        })
+    })
     const newProduct = await prisma.product.create({
         data: {
             title,
             description,
             subCategoryId,
-            status
+            status,
+            stock: Number(stock)
         },
     });
 
@@ -224,7 +232,7 @@ export const getOneProduct = async (productId: number) => {
         message: "Product not found."
     }
     const updated = await prisma.product.update({
-        where: { id:productId },
+        where: { id: productId },
         data: { views: { increment: 1 } },
     });
     return {
@@ -258,13 +266,22 @@ export const updateProduct = async (productId: number, data: ProductInterface) =
     const existingProduct = await prisma.product.findUnique({ where: { id: productId } });
     if (!existingProduct) return { ok: false, message: "Product not found." };
 
+    const stock = variants.map((variant) => {
+        const sizes = variant.sizes;
+        let temp = 0;
+        sizes.forEach((size) => {
+            temp += Number(size.stock);
+        })
+    })
+
     await prisma.product.update({
         where: { id: productId },
         data: {
             title,
             description,
-            subCategoryId,
             status,
+            stock: Number(stock),
+            subCategory: { connect: { id: subCategoryId } },
         },
     });
 
@@ -297,6 +314,7 @@ export const updateProduct = async (productId: number, data: ProductInterface) =
 
     return { ok: true, message: "Product updated successfully" };
 };
+
 
 
 export const deleteProduct = async (productId: number) => {
@@ -614,3 +632,57 @@ export const RecordProductClicks = async (id: number) => {
         message: "failed",
     };
 };
+
+
+
+export const updateProductVariantSizes = async (
+    variantId: number,
+    editedSizes: { size: string; stock: number }[],
+    productId: number
+) => {
+    if (!variantId || !productId || !Array.isArray(editedSizes)) {
+        return { ok: false, message: "Invalid data provided" };
+    }
+
+    const updatedVariant = await prisma.variant.update({
+        where: { id: variantId },
+        data: { sizes: editedSizes },
+    });
+
+    if (!updatedVariant) return { ok: false, message: "Variant update failed" };
+
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) return { ok: false, message: "Product not found" };
+
+    const oldStock = product.stock || 0;
+
+    const variantStock = editedSizes.reduce((acc, s) => acc + s.stock, 0);
+
+    const otherVariants = await prisma.variant.findMany({
+        where: { productId, NOT: { id: variantId } },
+    });
+
+    const otherVariantsStock = otherVariants.reduce((acc, v) => {
+        const sizes = Array.isArray(v.sizes) ? v.sizes : [];
+        // @ts-ignore
+        return acc + sizes.reduce((a, s) => a + s.stock, 0);
+    }, 0);
+
+    const newProductStock = variantStock + otherVariantsStock;
+
+    // @ts-ignore
+    const currentSoldCount = typeof product.sold === "object" && product.sold?.count ? product.sold.count : 0;
+    const soldDifference = oldStock - newProductStock;
+    const newSoldJson = { count: currentSoldCount + Math.max(0, soldDifference), date: new Date() };
+
+    await prisma.product.update({
+        where: { id: productId },
+        data: {
+            stock: newProductStock,
+            sold: newSoldJson,
+        },
+    });
+
+    return { ok: true, message: "Product stock updated successfully" };
+};
+

@@ -1,7 +1,7 @@
 "use client";
 
 import { RecordProductClicks } from "@/app/actions/product/product";
-import CommonServices, { ServiceCard } from "@/app/features/common/CommonServices";
+import { ServiceCard } from "@/app/features/common/CommonServices";
 import CommonWhatsapp from "@/app/features/common/CommonWhatsapp";
 import Loader from "@/app/sharks-dashboard-2025/features/Loader";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -35,6 +35,7 @@ interface Product {
     subCategoryId: number;
     subCategory: any;
     variants: Variant[];
+    stock: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -72,7 +73,6 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
         }
     }, [activeVariant]);
 
-
     const handleProductClick = async (id: number) => {
         await RecordProductClicks(id);
     }
@@ -82,7 +82,6 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
             <Loader classname="w-12 h-12" />
         </div>
     );
-
 
     if (!activeVariant) return (
         <div className="h-dvh flex items-center justify-center">
@@ -128,6 +127,11 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                     <h1 className="text-2xl font-semibold">{product.title}</h1>
                     <p className="text-gray-600">{product.description}</p>
 
+                    <p className="mt-4 text-lg font-medium text-main-3">
+                        Total Stock: {product.stock} -{" "}
+                        {product.stock == 0 && <span className="bg-red-200 text-red-500 px-2 py-1 rounded-md text-xs">sold out</span>}
+                    </p>
+
                     <div className="mt-4 space-y-2">
                         <p className={clsx("text-xl font-bold text-main-3", activeVariant.offer > 0 && "line-through opacity-45")}>
                             Price: {activeVariant.price} LE
@@ -142,7 +146,6 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                             </div>
                         )}
 
-                        {/* Sizes */}
                         <div className="flex flex-wrap gap-3 mt-2">
                             {activeVariant.sizes.map((sizeObj, idx) => (
                                 <button
@@ -150,12 +153,12 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                                     disabled={sizeObj.stock === 0}
                                     onClick={() => setSelectedSize(sizeObj.size)}
                                     className={clsx(
-                                        "text-xs px-2 py-1 rounded border",
+                                        "text-xs px-2 py-1 rounded border flex items-center gap-1",
                                         sizeObj.stock > 0 ? "bg-main-3 text-main-2" : "bg-gray-200 text-gray-500 cursor-not-allowed",
                                         selectedSize === sizeObj.size && "ring-2 ring-main-1"
                                     )}
                                 >
-                                    {sizeObj.size}
+                                    {sizeObj.size} ({sizeObj.stock})
                                 </button>
                             ))}
                         </div>
@@ -173,7 +176,9 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                                 title={product.title}
                                 subCategory={product.subCategory.title}
                                 size={selectedSize as string}
-                                color={activeVariant.color} />
+                                color={activeVariant.color}
+                                disabled={activeVariant.sizes.every(s => s.stock === 0) && product.stock == 0}
+                            />
                         </div>
                     </div>
                 </div>

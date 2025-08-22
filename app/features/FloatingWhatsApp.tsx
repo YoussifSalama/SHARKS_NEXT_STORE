@@ -12,7 +12,6 @@ const FloatingWhatsApp = () => {
     const [message, setMessage] = useState("");
     const [name, setName] = useState("");
 
-    // فتح الكارت بعد 5 ثواني مرة واحدة فقط
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsOpen(true);

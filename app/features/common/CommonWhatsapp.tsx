@@ -9,7 +9,8 @@ interface CommonWhatsappProps {
     size?: string;
     color?: string;
     phoneNumber?: string;
-    onClick:Function
+    onClick: Function;
+    disabled?: boolean;
 }
 
 const CommonWhatsapp: React.FC<CommonWhatsappProps> = ({
@@ -19,23 +20,24 @@ const CommonWhatsapp: React.FC<CommonWhatsappProps> = ({
     subCategory,
     size,
     phoneNumber = "201556543218",
-    color
+    color,
+    disabled
 }) => {
     const message = encodeURIComponent(
         `Hello, I am interested in this product:\n\nProduct: ${title}\nSubCategory: ${subCategory}\nProduct ID: ${productId}` +
-        (size ? `\nSize: ${size}` : "") + (color ?`\nColor: ${color}`:"")
+        (size ? `\nSize: ${size}` : "") + (color ? `\nColor: ${color}` : "")
     );
 
-    // WhatsApp link
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
     return (
         <a
-            href={whatsappUrl}
+            href={disabled ? undefined : whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={()=>{onClick(productId)}}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition"
+            onClick={() => { if (!disabled) onClick(productId) }}
+            className={`inline-flex items-center gap-2 px-4 py-2 font-semibold rounded transition
+                ${disabled ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
         >
             <img
                 src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"

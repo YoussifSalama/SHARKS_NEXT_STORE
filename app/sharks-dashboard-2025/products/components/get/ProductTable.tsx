@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { DeleteProductDialog } from "../delete/DeleteProductDialog";
+import { UpdateProductStock } from "../update/UpdateProductStockDialog";
 
 const TableSkeleton = ({ rows = 10, cols = 6 }: { rows?: number; cols?: number }) => (
     <>
@@ -39,19 +40,7 @@ const statusStyles: StatusStylesType[] = [
     { status: "draft", label: "Draft", style: "bg-gray-200 text-gray-600" },
 ];
 
-type Variant = {
-    stock: number;
-    sizes: string;
-    color: string;
-    id: number;
-    price: number;
-    imgs: { id: number; url: string }[];
-};
 
-type Size = {
-    size: string,
-    stock: number
-}
 export default function ProductTable({
     loading,
     products,
@@ -87,6 +76,13 @@ export default function ProductTable({
                             </span>
                         )}
                     </TableCell>
+                    <TableCell>{prod?.stock}</TableCell>
+                    <TableCell>
+                        <div>{prod?.sold.count}</div>
+                        {prod?.sold?.date &&
+                            <div>Last Sold: {new Date(prod?.sold.date).toLocaleDateString()}</div>
+                        }
+                    </TableCell>
                     <TableCell className="space-x-2">
                         <Button
                             onClick={() => router.push(`products/${prod.id}`)}
@@ -95,6 +91,8 @@ export default function ProductTable({
                         >
                             <Eye />
                         </Button>
+                        {/* @ts-ignore */}
+                        <UpdateProductStock variants={prod.variants} productId={prod.id} setRefresh={setRefresh} oldStock={prod.stock} />
                         <DeleteProductDialog productId={prod.id} setRefresh={setRefresh} />
                     </TableCell>
                 </TableRow>
@@ -111,6 +109,8 @@ export default function ProductTable({
                     <TableHead>Title</TableHead>
                     <TableHead>Description</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>In Stock</TableHead>
+                    <TableHead>Sales</TableHead>
                     <TableHead>Settings</TableHead>
                 </TableRow>
             </TableHeader>

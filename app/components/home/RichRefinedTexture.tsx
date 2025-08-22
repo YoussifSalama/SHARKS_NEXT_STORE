@@ -7,10 +7,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 const RichRefinedTexture = ({ data }: { data: any }) => {
     return (<section className="min-h-[50vh] py-12">
         <CommonSectionTitle className="text-center" title={"Rich & Refined Texture"} />
-        <CommonSectionLinkTitle className="text-center font-bold" title="All Shirts" href="/all-shirts" />
+        <CommonSectionLinkTitle className="text-center font-bold" title="All Products" href="/shop/products" />
         <ShirtsSlider data={data} />
         <div className="w-full flex items-center justify-center mt-4">
-            <CommonButton2 title="View All" />
+            <CommonButton2 title="View All" to="/shop/products" />
         </div>
     </section>);
 }

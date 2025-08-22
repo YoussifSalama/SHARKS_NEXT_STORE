@@ -20,6 +20,8 @@ model Product {
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   variants      Variant[]
+  stock  Int @default(0)
+  sold  Json     @default("{\"count\": 0}")
 }
 
 model Variant {

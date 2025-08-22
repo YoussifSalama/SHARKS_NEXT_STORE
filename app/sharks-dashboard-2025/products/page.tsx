@@ -46,8 +46,8 @@ const Products = () => {
             productStatus,
             search,
             {
-                product: ["id", "title", "description", "status", "createdAt"],
-                variants: ["id", "color", "stock", "size", "price"],
+                product: ["id", "title", "description", "status", "createdAt", "stock", "sold"],
+                variants: ["id", "color", "stock", "sizes", "price"],
                 imgs: 1
             }
         );
@@ -98,6 +98,7 @@ const ProductsLoader = () => {
                         <TableHead>Description</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>In Stock</TableHead>
+                        <TableHead>Sales</TableHead>
                         <TableHead>Settings</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -120,8 +121,12 @@ const ProductsLoader = () => {
                         <TableCell>
                             <div className="h-4 bg-gray-200 rounded w-36"></div>
                         </TableCell>
+                        <TableCell>
+                            <div className="h-4 bg-gray-200 rounded w-36"></div>
+                        </TableCell>
                         <TableCell className="flex gap-2 h-[100px]">
                             <div className="flex gap-2 h-full items-center">
+                                <div className="px-4 h-fit py-3 bg-gray-200 rounded"></div>
                                 <div className="px-4 h-fit py-3 bg-gray-200 rounded"></div>
                                 <div className="px-4 h-fit py-3 bg-gray-200 rounded"></div>
                             </div>

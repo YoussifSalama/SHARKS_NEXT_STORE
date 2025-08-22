@@ -13,6 +13,17 @@ import FloatingWhatsAppComponent from "./features/FloatingWhatsApp";
 import FloatingWhatsApp from "./features/FloatingWhatsApp";
 
 
+function makeSlug(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}
+
 
 export default async function Home() {
   const headerForServices = {
@@ -64,13 +75,11 @@ export default async function Home() {
       {/* <Offer/> */}
       {/* rest */}
       {pageResult?.rest && (pageResult?.rest).map((section: any, index: number) => {
-        const whichSection = (index % 2) == 0 ? <CommonSection1 data={section} /> : <CommonSection2 data={section} className={index % 2 !== 0 ? "h-dvh" : ""} />
+        const whichSection = (index % 2) == 0 ? <CommonSection1 data={section} to={`/shop/collections/${makeSlug(section.title)}?subId=${section.id}`} /> : <CommonSection2 data={section} className={index % 2 !== 0 ? "h-dvh" : ""} to={`/shop/collections/${makeSlug(section.title)}?subId=${section.id}`} />
         return whichSection;
       })}
       {/* service */}
       <CommonServices services={services} header={headerForServices} />
-      {/* floating whatsapp */}
-      <FloatingWhatsAppComponent />
       {/* footer */}
       <FloatingWhatsApp />
 

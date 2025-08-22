@@ -1,7 +1,7 @@
 import { CommonButton1, CommonButton2 } from "@/app/features/common/CommonButtons";
 import clsx from "clsx";
 
-export const CommonSection1 = ({ data }: { data: any }) => {
+export const CommonSection1 = ({ data,to }: { data: any,to?:string }) => {
     return (
         <section
             className="flex items-center justify-between container max-md:flex-col py-12"
@@ -15,7 +15,7 @@ export const CommonSection1 = ({ data }: { data: any }) => {
                     {data.description.slice(0, 500)}...
                 </p>
                 <div className="w-full flex items-center justify-center mt-4">
-                    <CommonButton2 title={"Discover " + data.title} aria-label={"discover " + data.title} />
+                    <CommonButton2 title={"Discover " + data.title} aria-label={"discover " + data.title} to={to && to} />
                 </div>
             </div>
             <div className="flex-1 max-md:w-full flex items-center justify-center px-6 mt-8 md:mt-0">
@@ -32,7 +32,7 @@ export const CommonSection1 = ({ data }: { data: any }) => {
     );
 };
 
-export const CommonSection2 = ({ data, className }: { data: any, className?: string }) => {
+export const CommonSection2 = ({ data, className,to }: { data: any, className?: string,to?:string }) => {
     return (
         <section
             className={clsx("flex items-center justify-center min-h-[60vh] text-main-2 object-cover flex-col space-y-2", className)}
@@ -48,7 +48,7 @@ export const CommonSection2 = ({ data, className }: { data: any, className?: str
                 {data.description.slice(0, 500)}...
             </p>
             <div className="mt-10">
-                <CommonButton1 title="Discover Now" aria-label={"discover " + data.title} />
+                <CommonButton1 title="Discover Now" aria-label={"discover " + data.title} to={to && to} />
             </div>
         </section>
     );

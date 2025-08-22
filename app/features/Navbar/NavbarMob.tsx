@@ -60,9 +60,9 @@ const NavbarMob = ({ data }: NavbarMobProps) => {
         <div className="lg:hidden relative">
             <button
                 onClick={toggleSidebar}
-                className="p-4 fixed top-4 right-4 z-20 bg-main-3/60 text-main-2 rounded-sm shadow-md"
+                className="p-4 fixed top-4 left-4 z-20 bg-main-3/60 text-main-2 rounded-sm shadow-md"
             >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
 
             <div
