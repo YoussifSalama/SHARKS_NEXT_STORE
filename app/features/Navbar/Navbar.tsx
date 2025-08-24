@@ -31,7 +31,7 @@ const Navbar = ({ data, home }: { data: any, home?: boolean }) => {
 
     return (
         <div className={clsx(`${(fixedColor && flow) ? "bg-main-3 text-main-2" : flow ? "bg-main-3 text-main-2" : "bg-main-2 text-main-3"}`, "relative z-10")}>
-            <Header route={{ title: "Contact Us", href: "/contact-us" }} />
+            <Header phone="201015739888" />
 
             <nav
                 className={cn(
