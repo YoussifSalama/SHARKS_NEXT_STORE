@@ -5,9 +5,11 @@ import { ServiceCard } from "@/app/features/common/CommonServices";
 import CommonWhatsapp from "@/app/features/common/CommonWhatsapp";
 import Loader from "@/app/sharks-dashboard-2025/features/Loader";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { ImageZoom } from "@/src/components/ui/shadcn-io/image-zoom";
 import clsx from "clsx";
 import { Earth, Gauge, HeartHandshake } from "lucide-react";
 import { useEffect, useState } from "react";
+import React from 'react'
 
 interface Size {
     size: string;
@@ -104,11 +106,15 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                         ))}
                     </div>
 
-                    <img
-                        src={activeImage}
-                        alt="product-image"
-                        className="w-full h-[60vh] object-contain bg-main-3/50"
-                    />
+
+
+                    <ImageZoom>
+                        <img
+                            src={activeImage}
+                            alt="product-image"
+                            className="w-full h-[60vh] object-contain bg-main-3/50"
+                        />
+                    </ImageZoom>
 
                     <Carousel className="w-full max-h-[10vh]">
                         <CarouselContent className="w-full h-fit">
