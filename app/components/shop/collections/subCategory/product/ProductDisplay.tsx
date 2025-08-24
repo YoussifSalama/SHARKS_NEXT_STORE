@@ -128,7 +128,6 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                     <p className="text-gray-600">{product.description}</p>
 
                     <p className="mt-4 text-lg font-medium text-main-3">
-                        Total Stock: {product.stock} -{" "}
                         {product.stock == 0 && <span className="bg-red-200 text-red-500 px-2 py-1 rounded-md text-xs">sold out</span>}
                     </p>
 
@@ -158,7 +157,7 @@ const ProductDisplay = ({ product }: ProductDisplayProps) => {
                                         selectedSize === sizeObj.size && "ring-2 ring-main-1"
                                     )}
                                 >
-                                    {sizeObj.size} ({sizeObj.stock})
+                                    {sizeObj.size}
                                 </button>
                             ))}
                         </div>

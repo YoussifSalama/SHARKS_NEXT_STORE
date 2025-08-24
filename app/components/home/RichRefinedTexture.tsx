@@ -3,6 +3,7 @@ import { CommonImagesPreview } from "@/app/features/common/CommonImagesPreview";
 import CommonSectionLinkTitle from "@/app/features/common/CommonSectionLinkTitle";
 import CommonSectionTitle from "@/app/features/common/CommonSectionTitle";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import Link from "next/link";
 
 const RichRefinedTexture = ({ data }: { data: any }) => {
     return (<section className="min-h-[50vh] py-12">
@@ -16,10 +17,12 @@ const RichRefinedTexture = ({ data }: { data: any }) => {
 }
 
 const ShirtsSlider = ({ data }: { data: any[] }) => {
+
     const allVariants = data.flatMap(product =>
         product.variants.map((variant: any) => ({
             ...variant,
             productTitle: product.title,
+            productId: product.id
         }))
     );
 
@@ -30,7 +33,7 @@ const ShirtsSlider = ({ data }: { data: any[] }) => {
                     const images = variant.imgs.map((img: any) => img.url);
 
                     return (
-                        <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/5 overflow-hidden">
+                        <Link href={"/shop/products/" + variant.productId} key={index} className="basis-full md:basis-1/2 lg:basis-1/5 overflow-hidden">
                             <div className="scale-85 w-full flex items-center justify-center">
                                 <CommonImagesPreview images={images} />
                             </div>
@@ -38,7 +41,7 @@ const ShirtsSlider = ({ data }: { data: any[] }) => {
                                 <p className="text-lg font-light opacity-85 text-main-1">{variant.productTitle}</p>
                                 <span className="text-xs font-light opacity-85 text-main-3">LE {variant.price}</span>
                             </div>
-                        </CarouselItem>
+                        </Link>
                     );
                 })}
             </CarouselContent>

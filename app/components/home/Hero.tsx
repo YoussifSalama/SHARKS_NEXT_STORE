@@ -1,7 +1,6 @@
 import { CommonButton1 } from "@/app/features/common/CommonButtons";
 
 const Hero = ({ data }: { data: any }) => {
-    console.log({ data });
 
     return (<section
         style={{

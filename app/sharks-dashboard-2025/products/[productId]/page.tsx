@@ -70,7 +70,6 @@ const SpecificProduct = () => {
     const fetchOneProduct = useCallback(async (id: number) => {
         setLoading(true);
         const result = await getOneProduct(id);
-        console.log({ result });
 
         if (result.ok && result.data) {
             setProduct(result.data);

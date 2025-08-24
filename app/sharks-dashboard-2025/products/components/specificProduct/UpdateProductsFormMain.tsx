@@ -55,7 +55,6 @@ export default function AddProductsFormMain({ product, setRefresh }: { product: 
     };
 
     const handleSubmit = async (data: any) => {
-        console.log({ data });
 
         setLoading(true);
         try {

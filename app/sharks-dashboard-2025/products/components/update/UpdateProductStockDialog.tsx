@@ -81,7 +81,6 @@ export function UpdateProductStock({
                 newSoldJson,
             };
 
-            console.log("Prepared data for update:", productData);
 
             await updateProductVariantSizes(id, editedSizes, productId);
 

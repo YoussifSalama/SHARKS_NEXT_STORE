@@ -1,7 +1,8 @@
 import { CommonButton1, CommonButton2 } from "@/app/features/common/CommonButtons";
 import clsx from "clsx";
 
-export const CommonSection1 = ({ data,to }: { data: any,to?:string }) => {
+export const CommonSection1 = ({ data, to }: { data: any, to?: string }) => {
+
     return (
         <section
             className="flex items-center justify-between container max-md:flex-col py-12"
@@ -32,12 +33,12 @@ export const CommonSection1 = ({ data,to }: { data: any,to?:string }) => {
     );
 };
 
-export const CommonSection2 = ({ data, className,to }: { data: any, className?: string,to?:string }) => {
+export const CommonSection2 = ({ data, className, to }: { data: any, className?: string, to?: string }) => {
     return (
         <section
             className={clsx("flex items-center justify-center min-h-[60vh] text-main-2 object-cover flex-col space-y-2", className)}
             style={{
-                backgroundImage: 'url("/bg.png")',
+                backgroundImage: `url(${data.img})`,
                 backgroundPosition: 'center top',
                 backgroundSize: 'cover'
             }}
