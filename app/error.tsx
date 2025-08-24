@@ -1,6 +1,7 @@
 "use client";
 
-import { CommonButton2 } from "../features/common/CommonButtons";
+import { CommonButton2 } from "./features/common/CommonButtons";
+
 
 const ErrorPage = () => {
     return (
